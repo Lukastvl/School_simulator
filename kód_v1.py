@@ -28,11 +28,12 @@ castka=800   #částka, kterou platí každý student na školném
 skolne=castka*pocet_zaku
 
 
-skolni_souteze=[]
 #----------------------------------------------------------------------------------------------------------------
 
 #třída hra
-"""
+###########pokud budu realizovat random události, vyplatilo by se učitele, studenty a rodiče udělat jako třídy.
+
+
 class game:
 	#def __init__(self):
 
@@ -65,40 +66,72 @@ class game:
 			else:
 				penize=penize-(vydaje_na_ucitele+najem)+skolne   #když škola nezkrachovala, tak se odečtou náklady
 				print penize
-				self.zeptejse()
-		if 
+				self.zeptej_se()
+		if studenti_spokojenost<=25:	#varování kvůli nespokojenosti nějaké skupiny
+			print "studenti jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat"
+		if rodice_spokojenost<=25:
+			self.zeptej_se()
+			print "rodiče jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat"
+			self.zeptej_se()
+		if ucitele_spokojenost<=25:
+			print "ucitele jsou vrcholně nespokojeni. Vyplatilo by se s tím něco udělat"
+			self.zeptej_se()
+		######meziškolní soutěže (zvlášť funkce volaná odsud
 		
 				
-	def zeptejse(self):   #náhrada za grafické rozhraní, lze díky tomu 
-		print "vpred / vylepseni / zmen"
+	def zeptej_se(self):   #náhrada za grafické rozhraní, lze díky tomu vkládat vstup aspoň primitivně
+		print "vpred / vylepseni / zmen_skolne"
 		lul=raw_input "vpred"
-		if lul =="vpred":
+		if lul =="vpred": #casovy skok o tyden
 			self.vpred()
-		elif lul=="vylepseni":
-			self.vylepseni()
-		elif lul=="zmen"
-			self.zmenitskolne()
-		
+		#elif lul=="vylepseni":
+			#self.vylepseni()
+		elif lul=="zmen_skolne" #nechá ředitele změnit školné, což má vliv na spokojenost
+			self.zmenit_skolne()
 		else:
-			self.zeptejse()
+			print "error. zkus to znova"
+			self.zeptej_se()
 			
 	
-	def zmenitskolne(self):
-		global skolne
-		ha=raw_input "kolik mají žáci platit?"
-		if(ha>)
-		skolne=ha
+	def zmenit_skolne(self):
+		global skolne  ##nešlo by to na jeden řádek?
+		global castka
+		global studenti_spokojenost
+		global rodice_spokojenost
+		self.x=0
+		self.y=0
+		print "současné školné na jednoho žáka je " + castka
+		print "zadej novou hodnotu školného. Zadej 'zpet' pro krok zpět "
+		self.ha=raw_input "kolik mají žáci platit?"
+		if (ha==zpet): #možnost vrátit se "o okno zpátky"
+			self.zeptej_se()
+		elif self.ha<1200 and self.ha>400 and self.ha!=castka:  #jestli není školné moc vysoké, nebo nízké, nebo jestli se vůbec změnilo
+			if self.ha<castka: 
+				self.ha-castka=self.x
+				self.x/50=self.y
+				studenti_spokojenost=studenti_spokojenost+self.y*5    #úprava spokojeností v závislosti na školném
+				rodice_spokojenost=rodice_spokojenost+self.y*5
+				print "od příštího měsíce se školné sníží. Studenti a rodiče jsou rádi"
+			else:
+				self.ha-castka=self.x
+				self.x/50=self.y			
+				studenti_spokojenost=studenti_spokojenost-self.y*5	  #úprava spokojenosti v závislosti na školném
+				rodice_spokojenost=rodice_spokojenost-self.y*5
+				print "od příštího měsíce se školné zvýší. Studenti a rodiče nejsou rádi"
+			castka=self.ha
+			self.zeptej_se()
+		elif:
+			print "neplatná hodnota, zadej znovu. 'zpet' pro krok zpět"	#error
+			self.zmenit_skolne()
+		print skolne
 		return skolne
+		
+	##možnost podnikání grantů?
+	##
 		
 				
 	
-	
-	
-	
-	"""	
-	
-print skolne
-	"""
+
 	
 hra=game()			
 hra.zeptejse()
