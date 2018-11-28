@@ -22,12 +22,6 @@ mainloop()
 
 
 
-###proč musíš neodpustit zrovna mě?
-###nejistoty jsou zbytečný
-###nikdy nikam s nikým nechodím
-#rip budoucnost
-#jak nedospělej?
-
 
 
 
