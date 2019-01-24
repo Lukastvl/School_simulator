@@ -15,7 +15,29 @@ class main:
 #proměnné
 #----------------------------------------------------------------------------------------------------------------
 
-
+		self.vzdel_souteze=[
+			"a soutěž v matematicu",	###seznam vědomostních soutěží
+			"a biologická olympiáda",
+			"a matematická olympiáda",
+			"a fyzikální olympiáda",
+			" matematický klokan",
+			"a soutěž Pražský glóbus",
+			"a zeměpisná olympiáda",
+		]
+		self.sport_souteze=[
+			" meziškolní turnaj ve vybíjené",
+			" meziškolní turnaj ve fotbale",
+			" meziškolní turnaj ve florbale",
+			" meziškolní turnaj v atletice",
+			" meziškolní turnaj v šipkách",
+			" McKačer cup",
+			
+		]
+		self.veda_souteze=[
+			"a soutěž v rychlomíchání chemických sloučenin",
+			"a robosoutěž"
+		]
+		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		#self.klidny_tyden=0 #kolik týdnů se nekonala žádná soutěž
 		self.penize=10000 #kolik má škola na účtě
@@ -274,7 +296,10 @@ class main:
 		self.building_expenses=Label(self.ecwnd,text="měsíční nájem: "+ str(self.najem))
 		self.building_expenses.pack()
 		
-		
+	def soutez(self):
+		self.soutez=Toplevel()
+		self.soutez.grab_set()
+		self.soutez_label=Label(self.soutez.text="V týdnu se konal")
 		
 lol=main()
 mainloop()
