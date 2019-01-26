@@ -24,18 +24,25 @@ class main:
 			"a soutěž Pražský glóbus",
 			"a zeměpisná olympiáda",
 		]
+		
 		self.sport_souteze=[
 			" meziškolní turnaj ve vybíjené",
-			" meziškolní turnaj ve fotbale",
-			" meziškolní turnaj ve florbale",
+			" meziškolní turnaj ve fotbalu",
+			" meziškolní turnaj ve florbalu",
 			" meziškolní turnaj v atletice",
 			" meziškolní turnaj v šipkách",
-			" McKačer cup",
-			
+			" meziškolní turnaj ve stolním tenisu",
+			" meziškolní turnaj v orientačním běhu",
 		]
+		
 		self.veda_souteze=[
 			"a soutěž v rychlomíchání chemických sloučenin",
-			"a robosoutěž"
+			"a robosoutěž",
+			"a soutěž školních časopisů",
+			"a soutěž v navrhování fyzikálních experimentů",
+			"a soutěž mladých inženýrů",
+			"a soutěž mladých designérů",
+			"a soutěž v rychlopitvách ježků",
 		]
 		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
@@ -52,11 +59,11 @@ class main:
 		
 		#modifikátory plynoucí z vybavení školy - používají se při meziškolních soutěžích
 		self.veda_level=0
-		self.veda_modifier=self.veda_level*2.25 
+		self.veda_modifier=self.veda_level*2.75 
 		self.sport_level=0
-		self.sport_modifier=self.sport_level*2.25
+		self.sport_modifier=self.sport_level*2.75
 		self.vedomosti_level=0
-		self.vedomosti_modifier=self.sport_level*2.25
+		self.vedomosti_modifier=self.sport_level*2.75
 
 
 		#proměnné, které jsou závislé na jiných faktorech
@@ -297,9 +304,31 @@ class main:
 		self.building_expenses.pack()
 		
 	def soutez(self):
-		self.soutez=Toplevel()
-		self.soutez.grab_set()
-		self.soutez_label=Label(self.soutez.text="V týdnu se konal")
+		typ=randint(1,3)
+		if (typ==1):
+			self.soutez=self.vzdel_souteze[randint(0,6)]
+			competition_modifier=self.vedomosti_modifier
+		elif(typ==2):
+			self.soutez=self.sport_souteze[randint(0,6)]
+			competition_modifier=self.sport_modifier
+		else:
+			self.soutez=self.veda_souteze[randint(0,6)]
+			competition_modifier=self.veda_modifier
+
+		self.soutez_okno=Toplevel()
+		self.soutez_okno.grab_set()
+		self.soutez_label=Label(self.soutez.text="V týdnu se konal"+str(self.soutez))
+		self.soutez_label.pack()
+		school1=randint(0,100)
+		school2=randint(0,100)
+		school3=randint(0,100)
+		playerschool=randint(0,100)+int(competition_modifier)
+		values=[school1,school2,school3,playerschool]
+		for lmao in values:
+			if(lmao)
+			
+		
+		
 		
 lol=main()
 mainloop()
