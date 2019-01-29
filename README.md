@@ -1,2 +1,2 @@
 # School_simulator
-maturitní práce lol
+maturitní práce
