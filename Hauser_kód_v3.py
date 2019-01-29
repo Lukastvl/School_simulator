@@ -304,29 +304,66 @@ class main:
 		self.building_expenses.pack()
 		
 	def soutez(self):
-		typ=randint(1,3)
-		if (typ==1):
+		self.place=1
+		self.typ=randint(1,3)
+		if (self.typ==1):
 			self.soutez=self.vzdel_souteze[randint(0,6)]
-			competition_modifier=self.vedomosti_modifier
-		elif(typ==2):
+			self.competition_modifier=self.vedomosti_modifier
+		elif(self.typ==2):
 			self.soutez=self.sport_souteze[randint(0,6)]
-			competition_modifier=self.sport_modifier
+			self.competition_modifier=self.sport_modifier
 		else:
 			self.soutez=self.veda_souteze[randint(0,6)]
-			competition_modifier=self.veda_modifier
+			self.competition_modifier=self.veda_modifier
 
 		self.soutez_okno=Toplevel()
 		self.soutez_okno.grab_set()
-		self.soutez_label=Label(self.soutez.text="V týdnu se konal"+str(self.soutez))
+		self.soutez_label=Label(self.soutez,text="V týdnu se konal"+str(self.soutez))
 		self.soutez_label.pack()
+		self.result_label=Label(self.soutez,text="")
+		self.result_label.pack()
+		self.prize_label=Label(self.soutez,text="")
+		self.prize_label.pack()
+		self.playerschool=randint(0,100)+int(self.competition_modifier)
+		self.pos_values=[]
+		for i in range (0,100):	#aby NPC škola nemohla mít stejné skóre jako hráč
+			self.pos_values.append(i)
+		self.pos_values.remove(playerschool)
+		
+		self.school1=pos_self.values[randint(0,len(self.pos_values)-1)]
+		self.school2=self.pos_values[randint(0,len(self.pos_values)-1)]
+		self.school3=self.pos_values[randint(0,len(self.pos_values)-1)]
+		
+		self.results=[self.playerschool,self.school1,self.school2,self.school3]
+		
+		while (max(self.results)!=self.playerschool):
+			self.results.remove(max(self.results))
+			self.place+=1
+			
+		self.prize=500*randint(1,50)
+		if self.place==2:
+			self.prize=self.prize*0.75
+		elif self.place==3:
+			self.prize=self.prize*0.5
+		elif self.place==4:
+			sefl.prize=self.prize*0
+			
+		if max(self.results)==self.playerschool:
+			self.result_label.config(text="Tvoje škola skončila "+str(self.place)+".")
+			self.prize_label.config(text="získal jsi finanční odměnu v hodnotě "+str(self.prize))
+		
+		
+		"""
 		school1=randint(0,100)
 		school2=randint(0,100)
 		school3=randint(0,100)
 		playerschool=randint(0,100)+int(competition_modifier)
 		values=[school1,school2,school3,playerschool]
+		if (max(values)==playerschool):
+		
 		for lmao in values:
 			if(lmao)
-			
+		"""	
 		
 		
 		
