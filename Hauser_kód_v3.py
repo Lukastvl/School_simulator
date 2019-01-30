@@ -46,12 +46,12 @@ class main:
 		]
 		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
-		#self.klidny_tyden=0 #kolik týdnů se nekonala žádná soutěž
+		self.calm_week=0 #kolik týdnů se nekonala žádná mezškolní soutěž
 		self.penize=10000 #kolik má škola na účtě
-		self.celkove_prijmy=0
-		self.celkove_vydaje=0
-		self.mesicni_prijmy=0
-		self.mesicni_vydaje=0
+		#self.celkove_prijmy=0 
+		#self.celkove_vydaje=0
+		#self.mesicni_prijmy=0
+		#self.mesicni_vydaje=0
 		self.studenti_spokojenost=50
 		self.ucitele_spokojenost=50
 		self.rodice_spokojenost=50
@@ -81,16 +81,12 @@ class main:
 		screen_width = self.main.winfo_screenwidth()
 		screen_height = self.main.winfo_screenheight()
 		self.main.attributes("-fullscreen", True)
-		#main.overrideredirect=True
-		#w = self.main.winfo_screenheight()
-		#h = self.main.winfo_screenwidth()
-		#self.main.geometry("%dx%d+0+0" % (w, h))
 		
 		#tlačítka
 		
-		self.forward_button=Button(self.main, text="vpřed",command=self.vpred) #tlačítka
+		self.forward_button=Button(self.main, text="vpřed",command=self.vpred) 
 		self.forward_button.pack()
-		self.exit_button=Button(self.main, text="opustit hru", command=self.terminate)
+		self.exit_button=Button(self.main, text="opustit hru", command=sys.exit) #ukončí hru
 		self.exit_button.pack()
 		self.money_button=Button(self.main, text="změnit školné",command=self.zmenit_skolne)
 		self.money_button.pack()
@@ -107,11 +103,11 @@ class main:
 		self.week_info.pack()
 		self.money_info=Label(self.main, text="finance: " + str (self.penize))
 		self.money_info.pack()
-		self.studenti_info=Label(self.main,text="spokojenost studentů: " + str (self.studenti_spokojenost))
+		self.studenti_info=Label(self.main,text="spokojenost studentů: " + str(self.studenti_spokojenost))
 		self.studenti_info.pack()
-		self.ucitele_info=Label(self.main,text="spokojenost učitelů: " + str (self.ucitele_spokojenost))
+		self.ucitele_info=Label(self.main,text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		self.ucitele_info.pack()
-		self.rodice_info=Label(self.main,text="spokojenost rodičů: " + str (self.rodice_spokojenost))
+		self.rodice_info=Label(self.main,text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		self.rodice_info.pack()
 #----------------------------------------------------------------------------------------------------------------
 
@@ -137,9 +133,6 @@ class main:
 		self.b1=Button(self.popup,text="OK",command=self.popup.destroy) ##jak zavřít i hlavní okno a vkusně ukončit hru? self.main.destroy zavírá jenom hlavní okno
 		self.b1.pack()
 		return
-
-	def terminate(self): #ukončí hru
-		sys.exit()
 	
 	def upgrades(self):
 		self.upg=Toplevel()
@@ -281,7 +274,20 @@ class main:
 		if self.ucitele_spokojenost<=25:
 			self.popupmsg("ucitele jsou vrcholně nespokojeni. Vyplatilo by se s tím něco udělat")
 			return
-			
+		
+		##meziškolní soutěže 
+
+		if self.calm_week+randint(0,10)>=10:
+			self.calm_week=0
+			self.competition()
+		else:
+			self.calm_week+=1
+		
+		##random events
+		
+		if randint(0,10)>4 and self.calm_week!=0:
+			self.random_event()
+		
 	def economy(self):
 		self.ecwnd=Toplevel()
 		self.ecwnd.attributes('-fullscreen', True)
@@ -303,34 +309,37 @@ class main:
 		self.building_expenses=Label(self.ecwnd,text="měsíční nájem: "+ str(self.najem))
 		self.building_expenses.pack()
 		
-	def soutez(self):
+
+	def competition(self):       ####meziškolní soutěže
 		self.place=1
 		self.typ=randint(1,3)
 		if (self.typ==1):
-			self.soutez=self.vzdel_souteze[randint(0,6)]
+			self.competition_type=self.vzdel_souteze[randint(0,6)]
 			self.competition_modifier=self.vedomosti_modifier
 		elif(self.typ==2):
-			self.soutez=self.sport_souteze[randint(0,6)]
+			self.competition_type=self.sport_souteze[randint(0,6)]
 			self.competition_modifier=self.sport_modifier
 		else:
-			self.soutez=self.veda_souteze[randint(0,6)]
+			self.competition_type=self.veda_souteze[randint(0,6)]
 			self.competition_modifier=self.veda_modifier
 
 		self.soutez_okno=Toplevel()
 		self.soutez_okno.grab_set()
-		self.soutez_label=Label(self.soutez,text="V týdnu se konal"+str(self.soutez))
+		self.soutez_label=Label(self.soutez_okno,text="V týdnu se konal"+str(self.competition_type))
 		self.soutez_label.pack()
-		self.result_label=Label(self.soutez,text="")
+		self.result_label=Label(self.soutez_okno,text="")
 		self.result_label.pack()
-		self.prize_label=Label(self.soutez,text="")
+		self.prize_label=Label(self.soutez_okno,text="")
 		self.prize_label.pack()
+		self.ok_b=Button(self.soutez_okno,text="ok",command=self.soutez_okno.destroy)
+		self.ok_b.pack()
 		self.playerschool=randint(0,100)+int(self.competition_modifier)
 		self.pos_values=[]
 		for i in range (0,100):	#aby NPC škola nemohla mít stejné skóre jako hráč
 			self.pos_values.append(i)
-		self.pos_values.remove(playerschool)
+		self.pos_values.remove(self.playerschool)
 		
-		self.school1=pos_self.values[randint(0,len(self.pos_values)-1)]
+		self.school1=self.pos_values[randint(0,len(self.pos_values)-1)]
 		self.school2=self.pos_values[randint(0,len(self.pos_values)-1)]
 		self.school3=self.pos_values[randint(0,len(self.pos_values)-1)]
 		
@@ -346,26 +355,42 @@ class main:
 		elif self.place==3:
 			self.prize=self.prize*0.5
 		elif self.place==4:
-			sefl.prize=self.prize*0
+			self.prize=self.prize*0
 			
 		if max(self.results)==self.playerschool:
 			self.result_label.config(text="Tvoje škola skončila "+str(self.place)+".")
-			self.prize_label.config(text="získal jsi finanční odměnu v hodnotě "+str(self.prize))
+			self.prize_label.config(text="Získal jsi finanční odměnu v hodnotě "+str(self.prize))
+			self.penize=self.penize+self.prize
+			self.rodice_spokojenost+=5
+			self.ucitele_spokojenost+=5 
+			self.money_info.config(text="finance: "+ str(self.penize))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		
-		
-		"""
-		school1=randint(0,100)
-		school2=randint(0,100)
-		school3=randint(0,100)
-		playerschool=randint(0,100)+int(competition_modifier)
-		values=[school1,school2,school3,playerschool]
-		if (max(values)==playerschool):
-		
-		for lmao in values:
-			if(lmao)
-		"""	
-		
-		
+	def random_event(self):
+		self.random_wndw=Toplevel
+		self.random_wndw.grab_set()
+		self.event_type=randint(0,x)	
+		if self.event_type==0:
+			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu"
+			self.consequence1="peníze - "+str(40000+self.zaci_lvl*8000)
+			self.consequence2="spokojenost rodičů - 10"
+			self.consequence3="spokojenost učitelů - 10"
+			self.consequence4="spokojenost žáků - 10"
+			self.penize=self.penize-(40000+self.zaci_lvl*8000)
+			self.rodice_spokojenost=self.rodice_spokojenost-10
+			self.ucitele_spokojenost=self.ucitele_spokojenost-10
+			self.zaci_spokojenost=self.zaci_spokojenost-10
+		self.gen_label=Label(self.random_wndw,text=self.event_text)
+		self.gen_label.pack()
+		self.consequence_label=Label(self.random_wndw,text=self.consequence1)
+		self.consequence_label.pack()
+		self.consequence2_label=Label(self.random_wndw,text=self.consequence2)
+		self.consequence2_label.pack()
+		self.consequence3_label=Label(self.random_wndw,text=self.consequence3)
+		self.consequence3_label.pack()
+		self.consequence4_label=Label(self.random_wndw,text=self.consequence4)
+		self.consequence4_label.pack()
 		
 lol=main()
 mainloop()
