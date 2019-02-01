@@ -48,6 +48,7 @@ class main:
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		self.calm_week=0 #kolik týdnů se nekonala žádná mezškolní soutěž
 		self.penize=10000 #kolik má škola na účtě
+		self.min_salary=12000
 		#self.celkove_prijmy=0 
 		#self.celkove_vydaje=0
 		#self.mesicni_prijmy=0
@@ -240,7 +241,7 @@ class main:
 		
 	def p_zmen(self):
 		self.p_output=int(self.p_entry.get())
-		if (self.p_output>400)and(self.p_output<1500):
+		if (self.p_output>self.min_salary):
 			self.castka=self.p_output
 			self.plat.destroy()
 			#self.potvrzeni=Label(self.ent, text="školné aktualizováno")
@@ -285,7 +286,7 @@ class main:
 		
 		##random events
 		
-		if randint(0,10)>4 and self.calm_week!=0:
+		if randint(0,10)<4 and self.calm_week!=0:
 			self.random_event()
 		
 	def economy(self):
@@ -368,11 +369,11 @@ class main:
 			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		
 	def random_event(self):
-		self.random_wndw=Toplevel
+		self.random_wndw=Toplevel()
 		self.random_wndw.grab_set()
-		self.event_type=randint(0,x)	
+		self.event_type=randint(0,11)	
 		if self.event_type==0:
-			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu"
+			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu."
 			self.consequence1="peníze - "+str(40000+self.zaci_lvl*8000)
 			self.consequence2="spokojenost rodičů - 10"
 			self.consequence3="spokojenost učitelů - 10"
@@ -380,17 +381,118 @@ class main:
 			self.penize=self.penize-(40000+self.zaci_lvl*8000)
 			self.rodice_spokojenost=self.rodice_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
+			self.studenti_spokojenost=self.zaci_spokojenost-10
+		elif self.event_type==1:
+			self.event_text="Vypověděl službu jeden z kotlů na teplou vodu. Ve škole teče jen studená voda a je třeba urychleně investovat do nového kotle."
+			self.consequence1="peníze - 100000"
+			self.consequence2="spokojenost žáků - 10"
+			self.consequence3="spokojenost učitelů - 10"
+			self.penize-=100000
 			self.zaci_spokojenost=self.zaci_spokojenost-10
+			self.ucitele_spokojenost=self.ucitele_spokojenost-10
+		elif self.event_type==2:
+			self.event_text="Studenti vytopili záchody, je třeba je opravit a potrestat viníky"
+			self.consequence1="peníze - 5000"
+			self.consequence2="spokejenost studentů - 5"
+			self.consequence3="spokojenost učitelů + 5"
+			self.consequence4="spokojenost rodičů - 5"
+			self.penize-=5000
+			self.studenti_spokojenost-=5
+			self.ucitele_spokojenost+=5
+			self.rodice_spokojenost-=5
+		elif self.event_type==3:
+			self.event_text="Výpadek elektřiny, studenti i učitelé šli dřív domů"
+			self.consequence1="spokojenost studentů + 5"
+			self.consequence2="spokojenost učitelů + 5"
+			self.consequence3="spokojenost rodičů - 5"
+			self.studenti_spokojenost+=5
+			self.ucitele_spokojenost+=5
+			self.rodice_spokojenost-=5
+		elif self.event_type==4:
+			self.event_text="Navýšení minimální mzdy: Minimální mzda je odteď "+str(self.min_salary+800)
+			self.consequence1="spokojenost učitelů + 10"
+			self.spokojenost_ucitelu+=10
+			self.min_salary+=800
+		elif self.event_type==5:
+			self.event_text="Stala se nehoda v chemické laboratoři, bude nepoužitelná, dokud se neopraví"
+			self.consequence1="level vědeckého vybavení - 1"
+			self.consequence2="spokojenost učitelů - 5"
+			self.consequence3="spokojenost žáků - 5"
+			self.consequence4="spokojenost rodičů - 5"
+			self.veda_level-=1
+			self.ucitele_spokojenost-=5
+			self.zaci_spokojenost-=5
+			self.rodice_spokojenost-=5
+		elif self.event_type==6:
+			self.event_text="Při kontrole se zjistilo, že školní učebnice jsou zastaralé a velké množství se jich muselo vyhodit"
+			self.consequence1="level učebního vybavení - 1"
+			self.consequence2="spokojenost učitelů - 5"
+			self.consequence3="spokojenost žáků - 5"
+			self.consequence4="spokojenost rodičů - 5"
+			self.vzdelanost_level-=1
+			self.ucitele_spokojenost-=5
+			self.zaci_spokojenost-=5
+			self.rodice_spokojenost-=5		
+		elif self.event_type==7:
+			self.event_text="Při velké bouřce se zničilo školní multifunkční hřiště"
+			self.consequence1="level sportovního vybavení - 1"
+			self.consequence2="spokojenost učitelů - 5"
+			self.consequence3="spokojenost žáků - 5"
+			self.consequence4="spokojenost rodičů - 5"
+			self.vzdelanost_level-=1
+			self.ucitele_spokojenost-=5
+			self.zaci_spokojenost-=5
+			self.rodice_spokojenost-=5
+		elif self.event_type==8:
+			self.event_text="škola obrdžela grant na sportovní vybavení"
+			self.consequence1="level sportovního vybavení + 1"
+			self.consequence2="spokojenost učitelů + 5"
+			self.consequence3="spokojenost žáků + 5"
+			self.consequence4="spokojenost rodičů + 5"
+			self.sport_level+=1
+			self.ucitele_spokojenost+=5
+			self.zaci_spokojenost+=5
+			self.rodice_spokojenost+=5
+		elif self.event_type==9:
+			self.event_text="škola obrdžela grant na vědecké vybavení"
+			self.consequence1="level vědeckého vybavení + 1"
+			self.consequence2="spokojenost učitelů + 5"
+			self.consequence3="spokojenost žáků + 5"
+			self.consequence4="spokojenost rodičů + 5"
+			self.veda_level+=1
+			self.ucitele_spokojenost+=5
+			self.zaci_spokojenost+=5
+			self.rodice_spokojenost+=5
+		elif self.event_type==10:
+			self.event_text="škola obrdžela grant na učební vybavení"
+			self.consequence1="level vědeckého vybavení + 1"
+			self.consequence2="spokojenost učitelů + 5"
+			self.consequence3="spokojenost žáků + 5"
+			self.consequence4="spokojenost rodičů + 5"
+			self.veda_level+=1
+			self.ucitele_spokojenost+=5
+			self.zaci_spokojenost+=5
+			self.rodice_spokojenost+=5
+		elif self.event_type==11:
+			self.h=randint(1,30)*1000
+			self.event_text="škola obdržela mimořádnou dotaci"
+			self.consequence1="peníze + "+str(self.h) 
+			self.penize=self.penize+self.h
 		self.gen_label=Label(self.random_wndw,text=self.event_text)
 		self.gen_label.pack()
 		self.consequence_label=Label(self.random_wndw,text=self.consequence1)
 		self.consequence_label.pack()
-		self.consequence2_label=Label(self.random_wndw,text=self.consequence2)
-		self.consequence2_label.pack()
-		self.consequence3_label=Label(self.random_wndw,text=self.consequence3)
-		self.consequence3_label.pack()
-		self.consequence4_label=Label(self.random_wndw,text=self.consequence4)
-		self.consequence4_label.pack()
+		if "self.consequence2" in locals():
+			self.consequence2_label=Label(self.random_wndw,text=self.consequence2)
+			self.consequence2_label.pack()
+		if "self.consequence3" in locals():
+			self.consequence3_label=Label(self.random_wndw,text=self.consequence3)
+			self.consequence3_label.pack()
+		if "self.consequence4" in locals():
+			self.consequence4_label=Label(self.random_wndw,text=self.consequence4)
+			self.consequence4_label.pack()
+		self.ok=Button(self.random_wndw,text="ok",command=self.wndw.destroy)
+		self.ok.pack()
 		
 lol=main()
 mainloop()
