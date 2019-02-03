@@ -46,18 +46,13 @@ class main:
 		]
 		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
-		self.calm_week=0 #kolik týdnů se nekonala žádná mezškolní soutěž
+		self.calm_week=0 #kolik týdnů se nekonala žádná meziškolní soutěž
 		self.penize=10000 #kolik má škola na účtě
 		self.min_salary=12000
-		#self.celkove_prijmy=0 
-		#self.celkove_vydaje=0
-		#self.mesicni_prijmy=0
-		#self.mesicni_vydaje=0
 		self.studenti_spokojenost=50
 		self.ucitele_spokojenost=50
 		self.rodice_spokojenost=50
-		
-		
+				
 		#modifikátory plynoucí z vybavení školy - používají se při meziškolních soutěžích
 		self.veda_level=0
 		self.veda_modifier=self.veda_level*2.75 
@@ -65,7 +60,6 @@ class main:
 		self.sport_modifier=self.sport_level*2.75
 		self.vedomosti_level=0
 		self.vedomosti_modifier=self.sport_level*2.75
-
 
 		#proměnné, které jsou závislé na jiných faktorech
 		self.plat=10
@@ -91,8 +85,8 @@ class main:
 		self.exit_button.pack()
 		self.money_button=Button(self.main, text="změnit školné",command=self.zmenit_skolne)
 		self.money_button.pack()
-		self.economy_button=Button(self.main, text="ekonomika",command=self.economy)
-		self.economy_button.pack()
+		#self.economy_button=Button(self.main, text="ekonomika",command=self.economy)
+		#self.economy_button.pack()
 		self.upgrade_button=Button(self.main,text="vylepšení",command=self.upgrades)
 		self.upgrade_button.pack()
 		self.plat_button=Button(self.main,text="změnit platy",command=self.zmenit_platy)
@@ -102,7 +96,7 @@ class main:
 		
 		self.week_info=Label(self.main, text="týden: " + str (self.tyden))
 		self.week_info.pack()
-		self.money_info=Label(self.main, text="finance: " + str (self.penize))
+		self.money_info=Label(self.main, text="finance: " + str (self.penize)+"kč")
 		self.money_info.pack()
 		self.studenti_info=Label(self.main,text="spokojenost studentů: " + str(self.studenti_spokojenost))
 		self.studenti_info.pack()
@@ -110,6 +104,16 @@ class main:
 		self.ucitele_info.pack()
 		self.rodice_info=Label(self.main,text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		self.rodice_info.pack()
+		self.teacher_count=Label(self.main,text="počet učitelů: "+str(self.pocet_ucitelu))
+		self.teacher_count.pack()
+		self.teacher_salary=Label(self.main,text="plat učitel/měsíc: "+str(self.plat)+"kč")
+		self.teacher_salary.pack()
+		self.student_count=Label(self.main,text="počet žáků: "+str(self.pocet_zaku))
+		self.student_count.pack()
+		self.student_income=Label(self.main,text="školné žák/měsíc: "+str(self.castka)+"kč")
+		self.student_income.pack()
+		self.building_expenses=Label(self.main,text="měsíční nájem: "+ str(self.najem)+"kč")
+		self.building_expenses.pack()
 #----------------------------------------------------------------------------------------------------------------
 
 	def game_over_finance(self):
@@ -288,7 +292,7 @@ class main:
 		
 		if randint(0,10)<4 and self.calm_week!=0:
 			self.random_event()
-		
+	"""	
 	def economy(self):
 		self.ecwnd=Toplevel()
 		self.ecwnd.attributes('-fullscreen', True)
@@ -309,7 +313,7 @@ class main:
 		self.student_income.pack()
 		self.building_expenses=Label(self.ecwnd,text="měsíční nájem: "+ str(self.najem))
 		self.building_expenses.pack()
-		
+	"""
 
 	def competition(self):       ####meziškolní soutěže
 		self.place=1
@@ -371,7 +375,7 @@ class main:
 	def random_event(self):
 		self.random_wndw=Toplevel()
 		self.random_wndw.grab_set()
-		self.event_type=randint(0,11)	
+		self.event_type=randint(0,13)	
 		if self.event_type==0:
 			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu."
 			self.consequence1="peníze - "+str(40000+self.zaci_lvl*8000)
@@ -381,14 +385,14 @@ class main:
 			self.penize=self.penize-(40000+self.zaci_lvl*8000)
 			self.rodice_spokojenost=self.rodice_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
-			self.studenti_spokojenost=self.zaci_spokojenost-10
+			self.studenti_spokojenost=self.studenti_spokojenost-10
 		elif self.event_type==1:
 			self.event_text="Vypověděl službu jeden z kotlů na teplou vodu. Ve škole teče jen studená voda a je třeba urychleně investovat do nového kotle."
 			self.consequence1="peníze - 100000"
 			self.consequence2="spokojenost žáků - 10"
 			self.consequence3="spokojenost učitelů - 10"
 			self.penize-=100000
-			self.zaci_spokojenost=self.zaci_spokojenost-10
+			self.zaci_spokojenost=self.studenti_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
 		elif self.event_type==2:
 			self.event_text="Studenti vytopili záchody, je třeba je opravit a potrestat viníky"
@@ -421,7 +425,7 @@ class main:
 			self.consequence4="spokojenost rodičů - 5"
 			self.veda_level-=1
 			self.ucitele_spokojenost-=5
-			self.zaci_spokojenost-=5
+			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
 		elif self.event_type==6:
 			self.event_text="Při kontrole se zjistilo, že školní učebnice jsou zastaralé a velké množství se jich muselo vyhodit"
@@ -431,7 +435,7 @@ class main:
 			self.consequence4="spokojenost rodičů - 5"
 			self.vzdelanost_level-=1
 			self.ucitele_spokojenost-=5
-			self.zaci_spokojenost-=5
+			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5		
 		elif self.event_type==7:
 			self.event_text="Při velké bouřce se zničilo školní multifunkční hřiště"
@@ -441,7 +445,7 @@ class main:
 			self.consequence4="spokojenost rodičů - 5"
 			self.vzdelanost_level-=1
 			self.ucitele_spokojenost-=5
-			self.zaci_spokojenost-=5
+			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
 		elif self.event_type==8:
 			self.event_text="škola obrdžela grant na sportovní vybavení"
@@ -451,7 +455,7 @@ class main:
 			self.consequence4="spokojenost rodičů + 5"
 			self.sport_level+=1
 			self.ucitele_spokojenost+=5
-			self.zaci_spokojenost+=5
+			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
 		elif self.event_type==9:
 			self.event_text="škola obrdžela grant na vědecké vybavení"
@@ -478,6 +482,16 @@ class main:
 			self.event_text="škola obdržela mimořádnou dotaci"
 			self.consequence1="peníze + "+str(self.h) 
 			self.penize=self.penize+self.h
+		elif self.event_type==12:
+			self.k=randint(5,25)*1000
+			self.event_text="škole byl zvýšen nájem o "+str(self.k)+" měsíčně"
+			self.consequence1="měsíční nájem + "+str(self.k)
+			self.najem=self.najem+self.k
+		elif self.event_type==13:
+			self.k=randint(5,30)*1000
+			self.event_text="škole byl snížen nájem o "+str(self.k)+" měsíčně"
+			self.consequence1="měsíční nájem - "+str(self.k)
+			self.najem=self.najem-self.k
 		self.gen_label=Label(self.random_wndw,text=self.event_text)
 		self.gen_label.pack()
 		self.consequence_label=Label(self.random_wndw,text=self.consequence1)
