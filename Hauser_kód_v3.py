@@ -1,5 +1,13 @@
 #coding: utf-8
 
+# jak restartovat program, aby nešlo hrát po prohře/výhře hráče
+# jinak lépe dynamicky vytvářet labely
+# mazání hodnot funkcí self.random_event() 
+# jak udržet self.penize jako int aby se neměnilo na float
+
+##grafika
+
+
 #----------------------------------------------------------------------------------------------------------------
 #importy
 from random import randint
@@ -47,7 +55,7 @@ class main:
 		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		self.calm_week=0 #kolik týdnů se nekonala žádná meziškolní soutěž
-		self.penize=10000 #kolik má škola na účtě
+		self.penize=int(10000) #kolik má škola na účtě, integer aby se z toho nedělal float a na obrazovce nebylo x.0
 		self.min_salary=12000
 		self.studenti_spokojenost=50
 		self.ucitele_spokojenost=50
@@ -62,10 +70,10 @@ class main:
 		self.vedomosti_modifier=self.sport_level*2.75
 
 		#proměnné, které jsou závislé na jiných faktorech
-		self.plat=10
+		self.plat=15500
 		self.pocet_zaku=120
 		self.zaci_lvl=1
-		self.najem=15
+		self.najem=100000
 		self.castka=800   #částka, kterou platí každý student na školném
 		self.pocet_ucitelu=self.pocet_zaku/10+10
 		self.vydaje_na_ucitele= self.pocet_ucitelu*self.plat
@@ -73,8 +81,8 @@ class main:
 		
 		
 		self.main=Tk()
-		screen_width = self.main.winfo_screenwidth()
-		screen_height = self.main.winfo_screenheight()
+		#screen_width = self.main.winfo_screenwidth()
+		#screen_height = self.main.winfo_screenheight()
 		self.main.attributes("-fullscreen", True)
 		
 		#tlačítka
@@ -93,6 +101,8 @@ class main:
 		self.plat_button.pack()
 		
 		#nápisy
+		
+		
 		
 		self.week_info=Label(self.main, text="týden: " + str (self.tyden))
 		self.week_info.pack()
@@ -167,38 +177,52 @@ class main:
 	
 	def expand(self):
 		self.penize=self.penize-((self.zaci_lvl+1)*105000)
+		self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		self.zaci_lvl+=1
 		self.ucitele_spokojenost-=5
+		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		self.pocet_zaku+=40
 		self.kapacita_info.config(text="maximální kapacita žáků je: "+str(self.pocet_zaku))
 		self.money_info.config(text=str(self.penize))
 	
 	def sport_upgrade(self):
 		self.penize=self.penize-((self.sport_level+1)*10000)
+		self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		self.sport_level+=1
 		self.studenti_spokojenost+=10
 		self.rodice_spokojenost+=5
 		self.ucitele_spokojenost+=5
+		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		self.sport_info.config(text="úroveň sportovního vybavení: "+str(self.sport_level))
 		self.money_info.config(text=str(self.penize))
 		return
 	
 	def veda_upgrade(self):
 		self.penize=self.penize-((self.veda_level+1)*10000)
+		self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		self.veda_level+=1
 		self.studenti_spokojenost+=5
 		self.rodice_spokojenost+=5
 		self.ucitele_spokojenost+=10
+		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		self.veda_info.config(text="úroveň vědeckého vybavení: "+str(self.veda_level))
 		self.money_info.config(text=str(self.penize))
 		return
 		
 	def vedomosti_upgrade(self):
 		self.penize=self.penize-((self.vedomosti_level+1)*10000)
+		self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		self.vedomosti_level+=1
 		self.studenti_spokojenost+=5
 		self.rodice_spokojenost+=10
 		self.ucitele_spokojenost+=5
+		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		self.vedomosti_info.config(text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level))
 		self.money_info.config(text=str(self.penize))
 		return
@@ -208,8 +232,10 @@ class main:
 		self.skol=Toplevel()
 		self.skol.grab_set()
 		self.skol.geometry("500x150+50+50")
-		self.infolabel=Label(self.skol, text="stávající školné na žáka na měsíc je "+str(self.castka)+" kč") #= str(variable_name) + ": " + str(variable) + "kč student/měsíc")
+		self.infolabel=Label(self.skol, text="stávající školné na žáka na měsíc je "+str(self.castka)+" kč")
 		self.infolabel.pack()
+		self.low=Label(self.skol,text="moc nízká hondota")
+		self.high=Label(self.skol,text="moc vysoká hodnota")
 		self.s_entry=Entry(self.skol, width=150)
 		self.s_entry.pack()
 		self.s_entry.focus_set()
@@ -224,32 +250,45 @@ class main:
 		self.s_output=int(self.s_entry.get())
 		if (self.s_output>400)and(self.s_output<1500):
 			self.castka=self.s_output
+			self.student_income.config(text="školné žák/měsíc: "+str(self.castka)+"kč")
+			self.student_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
 			self.skol.destroy()
 			#self.potvrzeni=Label(self.ent, text="školné aktualizováno")
+		elif (self.s_output<400):
+			self.low.pack()
+		elif (self.s_output>1500):
+			self.high.pack()
+			
 			return
 		
 	def zmenit_platy(self):
-		self.plat=Toplevel()
-		self.plat.grab_set()
-		self.plat.geometry("500x150+50+50")
-		self.pocet_label=Label(self.plat,text="počet učitelů: "+str(self.pocet_ucitelu)).pack()
-		self.plat_label=Label(self.plat,text="plat na jednoho učitele: "+str(self.plat)).pack()
-		self.naklady_label=Label(self.plat,text="celkové náklady na učitele: "+str(self.vydaje_na_ucitele)).pack()
-		self.p_entry=Entry(self.plat, width=150)
+		self.plat_wndw=Toplevel()
+		self.plat_wndw.grab_set()
+		self.plat_wndw.geometry("500x150+50+50")
+		self.pocet_label=Label(self.plat_wndw,text="počet učitelů: "+str(self.pocet_ucitelu)).pack()
+		self.plat_label=Label(self.plat_wndw,text="plat na jednoho učitele: "+str(self.plat)).pack()
+		self.naklady_label=Label(self.plat_wndw,text="celkové náklady na učitele: "+str(self.vydaje_na_ucitele)).pack()
+		self.error_line=Label(self.plat_wndw,text="neplatná hodnota")
+		self.p_entry=Entry(self.plat_wndw, width=150)
 		self.p_entry.pack()
 		self.p_entry.focus_set()
-		self.b1=Button(self.plat,text="Storno",command=self.plat.destroy)
+		self.b1=Button(self.plat_wndw,text="Storno",command=self.plat_wndw.destroy)
 		self.b1.pack()
-		self.b2=Button(self.plat,text="Potvrdit", command=self.p_zmen)# and self.entry.delete(0,"end")) #self.entry.get()))
+		self.b2=Button(self.plat_wndw,text="Potvrdit", command=self.p_zmen)# and self.entry.delete(0,"end")) #self.entry.get()))
 		self.b2.pack()	
 		
 	def p_zmen(self):
 		self.p_output=int(self.p_entry.get())
 		if (self.p_output>self.min_salary):
-			self.castka=self.p_output
-			self.plat.destroy()
+			self.plat=self.p_output
+			self.teacher_salary.config(text="plat učitel/měsíc: "+str(self.plat)+"kč")
+			self.plat_wndw.destroy()
+			self.ucitele_spokojenost+=self.p_output/300
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 			#self.potvrzeni=Label(self.ent, text="školné aktualizováno")
 			return
+		else:
+			self.error_line.pack()
 	
 	def vpred(self):
 		self.tyden+=1
@@ -262,14 +301,13 @@ class main:
 		if self.tyden%4==0:  #kontrola, zda škola nezkrachuje při placení nájmu nebo vyplácení platů na konci měsíce 
 			if self.penize<0:
 				self.game_over_finance()
-			print self.tyden, self.penize
 			if (self.penize+self.skolne)-(self.vydaje_na_ucitele+self.najem)<0:
 				self.game_over_finance()
 			elif self.studenti_spokojenost<15 and self.ucitele_spokojenost<15 or self.studenti_spokojenost<15 and self.rodice_spokojenost<15 or self.rodice_spokojenost<15 and self.ucitele_spokojenost<15: #kontrola spokojenosti na začátku každého měsíce
 				self.game_over_puc()
 			else:
 				self.penize=self.penize-(self.vydaje_na_ucitele+self.najem)+self.skolne   #když škola nezkrachovala, tak se odečtou náklady
-				self.money_info.config(text="finance: " + str (self.penize))
+				self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		if self.studenti_spokojenost<=25:	#varování kvůli nespokojenosti nějaké skupiny
 			self.popupmsg("studenti jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat")
 			return
@@ -282,7 +320,7 @@ class main:
 		
 		##meziškolní soutěže 
 
-		if self.calm_week+randint(0,10)>=10:
+		if self.calm_week+randint(0,10)>=15:
 			self.calm_week=0
 			self.competition()
 		else:
@@ -366,9 +404,10 @@ class main:
 			self.result_label.config(text="Tvoje škola skončila "+str(self.place)+".")
 			self.prize_label.config(text="Získal jsi finanční odměnu v hodnotě "+str(self.prize))
 			self.penize=self.penize+self.prize
+			self.money_info.config(text="finance: " + str (self.penize)+"kč")
 			self.rodice_spokojenost+=5
 			self.ucitele_spokojenost+=5 
-			self.money_info.config(text="finance: "+ str(self.penize))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
 			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		
@@ -386,14 +425,21 @@ class main:
 			self.rodice_spokojenost=self.rodice_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
 			self.studenti_spokojenost=self.studenti_spokojenost-10
+			self.money_info.config(text="finance: " + str (self.penize)+"kč")
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==1:
 			self.event_text="Vypověděl službu jeden z kotlů na teplou vodu. Ve škole teče jen studená voda a je třeba urychleně investovat do nového kotle."
 			self.consequence1="peníze - 100000"
 			self.consequence2="spokojenost žáků - 10"
 			self.consequence3="spokojenost učitelů - 10"
 			self.penize-=100000
-			self.zaci_spokojenost=self.studenti_spokojenost-10
+			self.studenti_spokojenost=self.studenti_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
+			self.money_info.config(text="finance: " + str (self.penize)+"kč")
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
 		elif self.event_type==2:
 			self.event_text="Studenti vytopili záchody, je třeba je opravit a potrestat viníky"
 			self.consequence1="peníze - 5000"
@@ -404,6 +450,10 @@ class main:
 			self.studenti_spokojenost-=5
 			self.ucitele_spokojenost+=5
 			self.rodice_spokojenost-=5
+			self.money_info.config(text="finance: " + str (self.penize)+"kč")
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==3:
 			self.event_text="Výpadek elektřiny, studenti i učitelé šli dřív domů"
 			self.consequence1="spokojenost studentů + 5"
@@ -412,11 +462,16 @@ class main:
 			self.studenti_spokojenost+=5
 			self.ucitele_spokojenost+=5
 			self.rodice_spokojenost-=5
+			self.money_info.config(text="finance: " + str (self.penize)+"kč")
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==4:
 			self.event_text="Navýšení minimální mzdy: Minimální mzda je odteď "+str(self.min_salary+800)
 			self.consequence1="spokojenost učitelů + 10"
 			self.spokojenost_ucitelu+=10
 			self.min_salary+=800
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		elif self.event_type==5:
 			self.event_text="Stala se nehoda v chemické laboratoři, bude nepoužitelná, dokud se neopraví"
 			self.consequence1="level vědeckého vybavení - 1"
@@ -427,26 +482,35 @@ class main:
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==6:
 			self.event_text="Při kontrole se zjistilo, že školní učebnice jsou zastaralé a velké množství se jich muselo vyhodit"
 			self.consequence1="level učebního vybavení - 1"
 			self.consequence2="spokojenost učitelů - 5"
 			self.consequence3="spokojenost žáků - 5"
 			self.consequence4="spokojenost rodičů - 5"
-			self.vzdelanost_level-=1
+			self.vedomosti_level-=1
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
-			self.rodice_spokojenost-=5		
+			self.rodice_spokojenost-=5
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==7:
 			self.event_text="Při velké bouřce se zničilo školní multifunkční hřiště"
 			self.consequence1="level sportovního vybavení - 1"
 			self.consequence2="spokojenost učitelů - 5"
 			self.consequence3="spokojenost žáků - 5"
 			self.consequence4="spokojenost rodičů - 5"
-			self.vzdelanost_level-=1
+			self.vedomosti_level-=1
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==8:
 			self.event_text="škola obrdžela grant na sportovní vybavení"
 			self.consequence1="level sportovního vybavení + 1"
@@ -457,6 +521,9 @@ class main:
 			self.ucitele_spokojenost+=5
 			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==9:
 			self.event_text="škola obrdžela grant na vědecké vybavení"
 			self.consequence1="level vědeckého vybavení + 1"
@@ -465,8 +532,11 @@ class main:
 			self.consequence4="spokojenost rodičů + 5"
 			self.veda_level+=1
 			self.ucitele_spokojenost+=5
-			self.zaci_spokojenost+=5
+			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==10:
 			self.event_text="škola obrdžela grant na učební vybavení"
 			self.consequence1="level vědeckého vybavení + 1"
@@ -475,23 +545,29 @@ class main:
 			self.consequence4="spokojenost rodičů + 5"
 			self.veda_level+=1
 			self.ucitele_spokojenost+=5
-			self.zaci_spokojenost+=5
+			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
+			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		elif self.event_type==11:
 			self.h=randint(1,30)*1000
 			self.event_text="škola obdržela mimořádnou dotaci"
 			self.consequence1="peníze + "+str(self.h) 
 			self.penize=self.penize+self.h
+			self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		elif self.event_type==12:
 			self.k=randint(5,25)*1000
 			self.event_text="škole byl zvýšen nájem o "+str(self.k)+" měsíčně"
 			self.consequence1="měsíční nájem + "+str(self.k)
 			self.najem=self.najem+self.k
+			self.building_expenses.config(text="měsíční nájem: "+ str(self.najem)+"kč")
 		elif self.event_type==13:
 			self.k=randint(5,30)*1000
 			self.event_text="škole byl snížen nájem o "+str(self.k)+" měsíčně"
 			self.consequence1="měsíční nájem - "+str(self.k)
 			self.najem=self.najem-self.k
+			self.building_expenses.config(text="měsíční nájem: "+ str(self.najem)+"kč")
 		self.gen_label=Label(self.random_wndw,text=self.event_text)
 		self.gen_label.pack()
 		self.consequence_label=Label(self.random_wndw,text=self.consequence1)
@@ -505,7 +581,7 @@ class main:
 		if "self.consequence4" in locals():
 			self.consequence4_label=Label(self.random_wndw,text=self.consequence4)
 			self.consequence4_label.pack()
-		self.ok=Button(self.random_wndw,text="ok",command=self.wndw.destroy)
+		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
 		self.ok.pack()
 		
 lol=main()
