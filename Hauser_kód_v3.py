@@ -3,10 +3,11 @@
 # jak restartovat program, aby nešlo hrát po prohře/výhře hráče
 # jinak lépe dynamicky vytvářet labely
 # mazání hodnot funkcí self.random_event() 
-# jak udržet self.penize jako int aby se neměnilo na float
+
+
+#!!!!!!předělat upgrady - na hlavní obrazovku?
 
 ##grafika
-
 
 #----------------------------------------------------------------------------------------------------------------
 #importy
@@ -15,6 +16,7 @@ from sys import exit
 from Tkinter import *
 
 #----------------------------------------------------------------------------------------------------------------
+#konstruktor
 
 class main:
 	def __init__(self):
@@ -24,7 +26,7 @@ class main:
 #----------------------------------------------------------------------------------------------------------------
 
 		self.vzdel_souteze=[
-			"a soutěž v matematicu",	###seznam vědomostních soutěží
+			"a soutěž v matematicu",	#seznam vědomostních meziškolních soutěží
 			"a biologická olympiáda",
 			"a matematická olympiáda",
 			"a fyzikální olympiáda",
@@ -33,7 +35,7 @@ class main:
 			"a zeměpisná olympiáda",
 		]
 		
-		self.sport_souteze=[
+		self.sport_souteze=[   #seznam sportovních meziškolních soutěží
 			" meziškolní turnaj ve vybíjené",
 			" meziškolní turnaj ve fotbalu",
 			" meziškolní turnaj ve florbalu",
@@ -43,7 +45,7 @@ class main:
 			" meziškolní turnaj v orientačním běhu",
 		]
 		
-		self.veda_souteze=[
+		self.veda_souteze=[ #seznam vědeckých meziškolních soutěží
 			"a soutěž v rychlomíchání chemických sloučenin",
 			"a robosoutěž",
 			"a soutěž školních časopisů",
@@ -56,12 +58,12 @@ class main:
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		self.calm_week=0 #kolik týdnů se nekonala žádná meziškolní soutěž
 		self.penize=int(10000) #kolik má škola na účtě, integer aby se z toho nedělal float a na obrazovce nebylo x.0
-		self.min_salary=12000
+		self.min_salary=12000 #minimální plat pro učitele
 		self.studenti_spokojenost=50
-		self.ucitele_spokojenost=50
+		self.ucitele_spokojenost=50 #spokojenosti tří skupin osazenstva školy
 		self.rodice_spokojenost=50
 				
-		#modifikátory plynoucí z vybavení školy - používají se při meziškolních soutěžích
+		# levely školního vybavení a modifikátory plynoucí z vybavení školy - používají se při meziškolních soutěžích
 		self.veda_level=0
 		self.veda_modifier=self.veda_level*2.75 
 		self.sport_level=0
@@ -70,129 +72,125 @@ class main:
 		self.vedomosti_modifier=self.sport_level*2.75
 
 		#proměnné, které jsou závislé na jiných faktorech
-		self.plat=15500
-		self.pocet_zaku=120
-		self.zaci_lvl=1
-		self.najem=100000
+		self.plat=15500 #plat na jednoho učitele
+		self.pocet_zaku=120	#počet žáků školy
+		self.zaci_lvl=1 #proměnná nepřímo závislá na počtu žáků, používá se pro počty při vylepšování školy 
+		self.najem=100000 #měsíční nájem za školní budovu
 		self.castka=800   #částka, kterou platí každý student na školném
-		self.pocet_ucitelu=self.pocet_zaku/10+10
-		self.vydaje_na_ucitele= self.pocet_ucitelu*self.plat
-		self.skolne=self.castka*self.pocet_zaku
+		self.pocet_ucitelu=self.pocet_zaku/10+10 #počet učitelů ve škole
+		self.vydaje_na_ucitele= self.pocet_ucitelu*self.plat #celkové výdaje na celý učitelský sbor
+		self.skolne=self.castka*self.pocet_zaku	#celková měsíční částka, kterouškola dostane na školném
 		
 		
 		self.main=Tk()
-		#screen_width = self.main.winfo_screenwidth()
-		#screen_height = self.main.winfo_screenheight()
-		self.main.attributes("-fullscreen", True)
+		self.main.attributes("-fullscreen", True) #fullscreen mode
 		
-		#tlačítka
+		#tlačítka na hlavní obrazovce
 		
-		self.forward_button=Button(self.main, text="vpřed",command=self.vpred) 
+		self.forward_button=Button(self.main, text="vpřed",command=self.vpred) #posune čas o týden vpřed 
 		self.forward_button.pack()
 		self.exit_button=Button(self.main, text="opustit hru", command=sys.exit) #ukončí hru
 		self.exit_button.pack()
-		self.money_button=Button(self.main, text="změnit školné",command=self.zmenit_skolne)
+		self.money_button=Button(self.main, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
 		self.money_button.pack()
-		#self.economy_button=Button(self.main, text="ekonomika",command=self.economy)
-		#self.economy_button.pack()
-		self.upgrade_button=Button(self.main,text="vylepšení",command=self.upgrades)
+		self.upgrade_button=Button(self.main,text="vylepšení",command=self.upgrades) #otevře okno s vylepšeními školního vybavení
 		self.upgrade_button.pack()
-		self.plat_button=Button(self.main,text="změnit platy",command=self.zmenit_platy)
+		self.plat_button=Button(self.main,text="změnit platy",command=self.zmenit_platy) #otevře okno na změnu učitelských platů
 		self.plat_button.pack()
 		
 		#nápisy
 		
-		
-		
-		self.week_info=Label(self.main, text="týden: " + str (self.tyden))
+		self.week_info=Label(self.main, text="týden: " + str (self.tyden)) #píše kolikátý je týden od začátku hry
 		self.week_info.pack()
-		self.money_info=Label(self.main, text="finance: " + str (self.penize)+"kč")
+		self.money_info=Label(self.main, text="finance: " + str (self.penize)+"kč") #píše stav konta školy
 		self.money_info.pack()
-		self.studenti_info=Label(self.main,text="spokojenost studentů: " + str(self.studenti_spokojenost))
+		self.studenti_info=Label(self.main,text="spokojenost studentů: " + str(self.studenti_spokojenost)) #píše spokojenost žáků
 		self.studenti_info.pack()
-		self.ucitele_info=Label(self.main,text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+		self.ucitele_info=Label(self.main,text="spokojenost učitelů: " + str(self.ucitele_spokojenost)) #píše spokojenost učitelů
 		self.ucitele_info.pack()
-		self.rodice_info=Label(self.main,text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+		self.rodice_info=Label(self.main,text="spokojenost rodičů: " + str(self.rodice_spokojenost)) #píše spokojenost rodičů
 		self.rodice_info.pack()
-		self.teacher_count=Label(self.main,text="počet učitelů: "+str(self.pocet_ucitelu))
+		self.teacher_count=Label(self.main,text="počet učitelů: "+str(self.pocet_ucitelu)) #píše počet učitelů na škole
 		self.teacher_count.pack()
-		self.teacher_salary=Label(self.main,text="plat učitel/měsíc: "+str(self.plat)+"kč")
+		self.teacher_salary=Label(self.main,text="plat učitel/měsíc: "+str(self.plat)+"kč") #píše plat na jednoho učitele
 		self.teacher_salary.pack()
-		self.student_count=Label(self.main,text="počet žáků: "+str(self.pocet_zaku))
+		self.student_count=Label(self.main,text="počet žáků: "+str(self.pocet_zaku)) #píše počet žáků
 		self.student_count.pack()
-		self.student_income=Label(self.main,text="školné žák/měsíc: "+str(self.castka)+"kč")
+		self.student_income=Label(self.main,text="školné žák/měsíc: "+str(self.castka)+"kč") #píše školné, které platí každý žák za měsíc
 		self.student_income.pack()
-		self.building_expenses=Label(self.main,text="měsíční nájem: "+ str(self.najem)+"kč")
+		self.building_expenses=Label(self.main,text="měsíční nájem: "+ str(self.najem)+"kč") #píše měsíční nájem
 		self.building_expenses.pack()
 #----------------------------------------------------------------------------------------------------------------
 
-	def game_over_finance(self):
+	def game_over_finance(self): #funkce na konec hry kvůli financím
 		self.popupmsg("konec hry, Škola zkrachovala, zkus to znovu")
 		return
 		
-	def game_over_puc(self):
+	def game_over_puc(self): #funkce na konec hry kvůli znepřátelení osazenstva školy/rodičů
 		self.popupmsg("konec hry, byl jsi sesazen kombinovanou mocí svých poddaných")
 		return
 		
-	def game_over_gut(self):  
+	def game_over_gut(self): #funkce na "šťastný konec hry"
 		self.popupmsg("konec hry, šťastně jsi dokázal vést svou školu po dobu dvou let! Gratulujeme")
 		return
 	
 	def popupmsg(self,msg):  #custom msgbox
 		self.popup=Toplevel()
-		self.popup.grab_set()
+		self.popup.grab_set() #aby uživatel nemohl do hlavního okna než vyřeší popup
 		self.popup.geometry("500x150+50+50")
-		self.popup.wm_title("pozor")
+		#self.popup.wm_title("pozor")
 		self.label=Label(self.popup, text=msg)
 		self.label.pack(side="top",fill="x", pady=10)
-		self.b1=Button(self.popup,text="OK",command=self.popup.destroy) ##jak zavřít i hlavní okno a vkusně ukončit hru? self.main.destroy zavírá jenom hlavní okno
+		self.b1=Button(self.popup,text="OK",command=self.popup.destroy) #ok tlačítko, zavírá popup
 		self.b1.pack()
 		return
 	
-	def upgrades(self):
+	def upgrades(self): #okno, kde se dá vylepšovat školní vybavení
 		self.upg=Toplevel()
-		self.upg.attributes("-fullscreen",True)
-		##zpět
-		self.b1=Button(self.upg,text="zpět",command=self.upg.destroy)
-		self.b1.pack()
+		self.upg.grab_set()
+		#self.upg.attributes("-fullscreen",True)
+		
 		##info
-		self.sport_info=Label(self.upg,text="úroveň sportovního vybavení: "+str(self.sport_level))
+		self.sport_info=Label(self.upg,text="úroveň sportovního vybavení: "+str(self.sport_level)) #info o levelu sportovního vybavení
 		self.sport_info.pack()
-		self.veda_info=Label(self.upg,text="úroveň vědeckého vybavení: "+str(self.veda_level))
+		self.veda_info=Label(self.upg,text="úroveň vědeckého vybavení: "+str(self.veda_level)) #info o levelu vědeckého vybavení
 		self.veda_info.pack()
-		self.vedomosti_info=Label(self.upg,text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level))
+		self.vedomosti_info=Label(self.upg,text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level)) #info o levelu učebního vybavení
 		self.vedomosti_info.pack()
-		self.kapacita_info=Label(self.upg,text="maximální kapacita žáků je: "+str(self.pocet_zaku))
+		self.kapacita_info=Label(self.upg,text="maximální kapacita žáků je: "+str(self.pocet_zaku)) #info o počtu žáků
 		self.kapacita_info.pack()
+		
 		##tlačítka na vylepšení
-		self.sport_button=Button(self.upg,text="vylepšit sportovní vybavení",command=self.sport_upgrade)
+		self.sport_button=Button(self.upg,text="vylepšit sportovní vybavení",command=self.sport_upgrade) #tlačítko na vylepšení sportovního vybavení
 		self.sport_button.pack()
-		self.veda_button=Button(self.upg,text="vylepšit vědecké vybavení",command=self.veda_upgrade)
+		self.veda_button=Button(self.upg,text="vylepšit vědecké vybavení",command=self.veda_upgrade) #tlačítko na vylepšení vědeckého vybavení 
 		self.veda_button.pack()
-		self.vedomosti_button=Button(self.upg,text="vylepšit učební pomůcky",command=self.vedomosti_upgrade)
+		self.vedomosti_button=Button(self.upg,text="vylepšit učební pomůcky",command=self.vedomosti_upgrade) #tlačítko na vylepšení učebních pomůcek
 		self.vedomosti_button.pack()
-		self.capacity_button=Button(self.upg,text="zvýšit kapacitu školy",command=self.expand)
+		self.capacity_button=Button(self.upg,text="zvýšit kapacitu školy",command=self.expand) #tlačítko na zvětšení školy
 		self.capacity_button.pack()
+		##zpět
+		self.b1=Button(self.upg,text="zpět",command=self.upg.destroy) #tlačítko zavírající okno
+		self.b1.pack()
 		return
 	
-	def expand(self):
-		self.penize=self.penize-((self.zaci_lvl+1)*105000)
+	def expand(self): #funkce zvyšující kapacitu budovy
+		self.penize=self.penize-((self.zaci_lvl+1)*1050000) #počítání ceny na základě stávajícího počtu žáků
 		self.money_info.config(text="finance: " + str (self.penize)+"kč")
-		self.zaci_lvl+=1
-		self.ucitele_spokojenost-=5
+		self.zaci_lvl+=1 
+		self.ucitele_spokojenost-=5 #sníží spokojenost učitelů, protože nemají rádi na starost víc lidí
 		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-		self.pocet_zaku+=40
+		self.pocet_zaku+=40 #přidá kapacitu škole (+40 žáků)
 		self.kapacita_info.config(text="maximální kapacita žáků je: "+str(self.pocet_zaku))
-		self.money_info.config(text=str(self.penize))
 	
-	def sport_upgrade(self):
-		self.penize=self.penize-((self.sport_level+1)*10000)
+	def sport_upgrade(self): #funkce zvyšující úroveň sportovního vybavení
+		self.penize=self.penize-((self.sport_level+1)*10000) #počítání ceny a odečítání peněz na základě stávajícího lvlu vybavení
 		self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		self.sport_level+=1
-		self.studenti_spokojenost+=10
+		self.studenti_spokojenost+=10  #úpravy spokojeností
 		self.rodice_spokojenost+=5
 		self.ucitele_spokojenost+=5
-		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))  #úpravy infolabelů v hlavním okně
 		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
 		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 		self.sport_info.config(text="úroveň sportovního vybavení: "+str(self.sport_level))
@@ -266,6 +264,7 @@ class main:
 		self.plat_wndw.grab_set()
 		self.plat_wndw.geometry("500x150+50+50")
 		self.pocet_label=Label(self.plat_wndw,text="počet učitelů: "+str(self.pocet_ucitelu)).pack()
+		self.teacher_min_salary=Label(self.plat_wndw,text="minimální plat: "+str(self.min_salary)).pack()
 		self.plat_label=Label(self.plat_wndw,text="plat na jednoho učitele: "+str(self.plat)).pack()
 		self.naklady_label=Label(self.plat_wndw,text="celkové náklady na učitele: "+str(self.vydaje_na_ucitele)).pack()
 		self.error_line=Label(self.plat_wndw,text="neplatná hodnota")
