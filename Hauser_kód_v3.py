@@ -3,7 +3,9 @@
 # jak restartovat program, aby nešlo hrát po prohře/výhře hráče
 # jinak lépe dynamicky vytvářet labely
 # mazání hodnot funkcí self.random_event() 
+# spokojenosti - navždycky int
 
+#spočítat a vybalancovat začáteční pozici hráče
 
 #!!!!!!předělat upgrady - na hlavní obrazovku?
 
@@ -126,7 +128,7 @@ class main:
 		self.popupmsg("konec hry, Škola zkrachovala, zkus to znovu")
 		return
 		
-	def game_over_puc(self): #funkce na konec hry kvůli znepřátelení osazenstva školy/rodičů
+	def game_over_odvolani(self): #funkce na konec hry kvůli znepřátelení osazenstva školy/rodičů
 		self.popupmsg("konec hry, byl jsi sesazen kombinovanou mocí svých poddaných")
 		return
 		
@@ -197,8 +199,8 @@ class main:
 		self.money_info.config(text=str(self.penize))
 		return
 	
-	def veda_upgrade(self):
-		self.penize=self.penize-((self.veda_level+1)*10000)
+	def veda_upgrade(self): #funkce zvyšující úroveň vědeckého vybavení
+		self.penize=self.penize-((self.veda_level+1)*10000) #dynamciká cena odvíjející se od současného lvlu vybavení
 		self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		self.veda_level+=1
 		self.studenti_spokojenost+=5
@@ -226,40 +228,39 @@ class main:
 		return
 		
 
-	def zmenit_skolne(self):
+	def zmenit_skolne(self): #definuje okno, které umožňuje měnit školné 
 		self.skol=Toplevel()
-		self.skol.grab_set()
+		self.skol.grab_set() #
 		self.skol.geometry("500x150+50+50")
 		self.infolabel=Label(self.skol, text="stávající školné na žáka na měsíc je "+str(self.castka)+" kč")
 		self.infolabel.pack()
-		self.low=Label(self.skol,text="moc nízká hondota")
+		self.low=Label(self.skol,text="moc nízká hondota") #definice textu pro případ zadání neplatné hodnoty hráčem
 		self.high=Label(self.skol,text="moc vysoká hodnota")
 		self.s_entry=Entry(self.skol, width=150)
 		self.s_entry.pack()
-		self.s_entry.focus_set()
-		#self.output=self.entry.get()
-		self.b1=Button(self.skol, text="Storno", command=self.skol.destroy)
+		self.s_entry.focus_set() #aby se hned po otevření okna dalo psát do Entry
+		self.b1=Button(self.skol, text="Storno", command=self.skol.destroy) #tlačítka
 		self.b1.pack()
-		self.b2=Button(self.skol,text="Potvrdit", command=self.s_zmen)# and self.entry.delete(0,"end")) #self.entry.get()))
+		self.b2=Button(self.skol,text="Potvrdit", command=self.s_zmen)
 		self.b2.pack()
 		#return self.skol
 		
-	def s_zmen(self):
-		self.s_output=int(self.s_entry.get())
-		if (self.s_output>400)and(self.s_output<1500):
+	def s_zmen(self): #funkce měnící výši školného
+		self.s_output=int(self.s_entry.get()) #vyčtení hodnoty z Entry 
+		if (self.s_output>400)and(self.s_output<1500): #kontrola jestli je zadaná hodnota v povoleném rozmezí
 			self.castka=self.s_output
-			self.student_income.config(text="školné žák/měsíc: "+str(self.castka)+"kč")
+			self.student_income.config(text="školné žák/měsíc: "+str(self.castka)+"kč")	
 			self.student_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.skol.destroy()
+			self.skol.destroy() 
 			#self.potvrzeni=Label(self.ent, text="školné aktualizováno")
-		elif (self.s_output<400):
+		elif (self.s_output<400): #když je zadaná hodnota moc nízká, napíše hlášku nadefinovanou v self.zmenit_skolne
 			self.low.pack()
-		elif (self.s_output>1500):
+		elif (self.s_output>1500): #když je zadaná hodnota moc vysoká napíše hlášku nadefinovanou v self.zmenit_skolne
 			self.high.pack()
 			
 			return
 		
-	def zmenit_platy(self):
+	def zmenit_platy(self): #definuje okno umožňující měnit platy učitelů 
 		self.plat_wndw=Toplevel()
 		self.plat_wndw.grab_set()
 		self.plat_wndw.geometry("500x150+50+50")
@@ -271,55 +272,56 @@ class main:
 		self.p_entry=Entry(self.plat_wndw, width=150)
 		self.p_entry.pack()
 		self.p_entry.focus_set()
-		self.b1=Button(self.plat_wndw,text="Storno",command=self.plat_wndw.destroy)
+		self.b1=Button(self.plat_wndw,text="Storno",command=self.plat_wndw.destroy) #tlačítko zavírající okno
 		self.b1.pack()
-		self.b2=Button(self.plat_wndw,text="Potvrdit", command=self.p_zmen)# and self.entry.delete(0,"end")) #self.entry.get()))
+		self.b2=Button(self.plat_wndw,text="Potvrdit", command=self.p_zmen) #tlačítko volající funkci, která mění výši platů
 		self.b2.pack()	
 		
-	def p_zmen(self):
-		self.p_output=int(self.p_entry.get())
-		if (self.p_output>self.min_salary):
+	def p_zmen(self): #funkce měnící plat 
+		self.p_output=int(self.p_entry.get()) #vyčtení hodnoty zadané hráčem
+		if (self.p_output>self.min_salary): #kontrola, zda je zadaná hodnota nad minimálním platem
+			if self.p_output>self.plat:
+				self.ucitele_spokojenost+=(self.p_output-self.plat)/300 #algorytmus měnící spokojenost učitelů v závislosti na tom, jestli jim bylo přidáno, nebo ubráno
+				self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			else:
+				self.ucitele_spokojenost-=(self.plat-self.p_output)/300
+				self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 			self.plat=self.p_output
-			self.teacher_salary.config(text="plat učitel/měsíc: "+str(self.plat)+"kč")
-			self.plat_wndw.destroy()
-			self.ucitele_spokojenost+=self.p_output/300
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			#self.potvrzeni=Label(self.ent, text="školné aktualizováno")
+			self.teacher_salary.config(text="plat učitel/měsíc: "+str(self.plat)+"kč") 
+			self.plat_wndw.destroy() #konec změny, zavření okna
 			return
 		else:
-			self.error_line.pack()
+			self.error_line.pack() #když je neplatná hodnota, objeví se chybová hláška
 	
-	def vpred(self):
+	def vpred(self): #funkce posouvající čas o týden dopředu
 		self.tyden+=1
 		self.week_info.config(text="týden= " + str (self.tyden)) #mění číslo týdne v ukazateli v hlavním okně
 		if self.tyden%44==0: #kontrola, jestli neskončil školní rok
 			self.tyden=self.tyden+7 #skok přes prázdniny
 		if self.tyden==104: #kontrola, jestli hráči neskončilo funkční obodobí
-			self.game_over_gut()
+			self.game_over_gut() # funkce na šťastný konec
 			return
 		if self.tyden%4==0:  #kontrola, zda škola nezkrachuje při placení nájmu nebo vyplácení platů na konci měsíce 
-			if self.penize<0:
+			if (self.penize+self.skolne)-(self.vydaje_na_ucitele+self.najem)<0: #když je škola ke konci měsíce zadlužená, hráč prohrál
 				self.game_over_finance()
-			if (self.penize+self.skolne)-(self.vydaje_na_ucitele+self.najem)<0:
-				self.game_over_finance()
-			elif self.studenti_spokojenost<15 and self.ucitele_spokojenost<15 or self.studenti_spokojenost<15 and self.rodice_spokojenost<15 or self.rodice_spokojenost<15 and self.ucitele_spokojenost<15: #kontrola spokojenosti na začátku každého měsíce
-				self.game_over_puc()
+			elif self.studenti_spokojenost<15 and self.ucitele_spokojenost<15 or self.studenti_spokojenost<15 and self.rodice_spokojenost<15 or self.rodice_spokojenost<15 and self.ucitele_spokojenost<15: #když jsou dvě skupiny ze tří vrcholně nespokojeny, ředitel bude k začátku příštího měsíce odvolán - hráč prohraje
+				self.game_over_odvolani()
 			else:
 				self.penize=self.penize-(self.vydaje_na_ucitele+self.najem)+self.skolne   #když škola nezkrachovala, tak se odečtou náklady
 				self.money_info.config(text="finance: " + str (self.penize)+"kč")
 		if self.studenti_spokojenost<=25:	#varování kvůli nespokojenosti nějaké skupiny
-			self.popupmsg("studenti jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat")
+			self.popupmsg("studenti jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat") #varuje hráče před nespokojeností studentů
 			return
 		if self.rodice_spokojenost<=25:
-			self.popupmsg("rodiče jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat")
+			self.popupmsg("rodiče jsou vrcholně nespokojeni. Vyplatilo by se něco s tím udělat") #varuje hráče před nespokojeností rodičů
 			return
 		if self.ucitele_spokojenost<=25:
-			self.popupmsg("ucitele jsou vrcholně nespokojeni. Vyplatilo by se s tím něco udělat")
+			self.popupmsg("ucitele jsou vrcholně nespokojeni. Vyplatilo by se s tím něco udělat") #varuje hráče před nespokojeností učitelů
 			return
 		
 		##meziškolní soutěže 
 
-		if self.calm_week+randint(0,10)>=15:
+		if self.calm_week+randint(0,10)>=15: #algorytmus, který kombinuje náhodu a okolnosti. Rozhoduje o tom, jestli se spustí meziškolní soutěž
 			self.calm_week=0
 			self.competition()
 		else:
@@ -327,35 +329,14 @@ class main:
 		
 		##random events
 		
-		if randint(0,10)<4 and self.calm_week!=0:
+		if randint(0,10)<4 and self.calm_week!=0: #algorytmus, který spouští náhodné události 
 			self.random_event()
-	"""	
-	def economy(self):
-		self.ecwnd=Toplevel()
-		self.ecwnd.attributes('-fullscreen', True)
-		self.ecwnd.grab_set()
-		self.back_button=Button(self.ecwnd, text="zpět",command=self.ecwnd.destroy)
-		self.back_button.pack()
-		self.time_info=Label(self.ecwnd, text="týden: " + str (self.tyden))
-		self.time_info.pack()
-		self.money_info=Label(self.ecwnd,text="finance: " + str (self.penize))
-		self.money_info.pack()
-		self.teacher_count=Label(self.ecwnd,text="počet učitelů: "+str(self.pocet_ucitelu))
-		self.teacher_count.pack()
-		self.teacher_salary=Label(self.ecwnd,text="plat učitel/měsíc: "+str(self.plat))
-		self.teacher_salary.pack()
-		self.student_count=Label(self.ecwnd,text="počet žáků: "+str(self.pocet_zaku))
-		self.student_count.pack()
-		self.student_income=Label(self.ecwnd,text="školné žák/měsíc: "+str(self.castka))
-		self.student_income.pack()
-		self.building_expenses=Label(self.ecwnd,text="měsíční nájem: "+ str(self.najem))
-		self.building_expenses.pack()
-	"""
 
-	def competition(self):       ####meziškolní soutěže
-		self.place=1
-		self.typ=randint(1,3)
-		if (self.typ==1):
+
+	def competition(self): #meziškolní soutěže
+		self.place=1 #proměnná používaná pro určování umístění hráčovy školy
+		self.typ=randint(1,3) 
+		if (self.typ==1): #test rozhodující o tom, jestli bude soutěž vědomostní, vědecká, nebo sportovní a taky jaká konkrétní soutěž to bude.
 			self.competition_type=self.vzdel_souteze[randint(0,6)]
 			self.competition_modifier=self.vedomosti_modifier
 		elif(self.typ==2):
@@ -365,66 +346,68 @@ class main:
 			self.competition_type=self.veda_souteze[randint(0,6)]
 			self.competition_modifier=self.veda_modifier
 
-		self.soutez_okno=Toplevel()
+		self.soutez_okno=Toplevel() #definice okna pro soutěže
 		self.soutez_okno.grab_set()
 		self.soutez_label=Label(self.soutez_okno,text="V týdnu se konal"+str(self.competition_type))
 		self.soutez_label.pack()
-		self.result_label=Label(self.soutez_okno,text="")
+		self.result_label=Label(self.soutez_okno,text="") #prázdný label, přidá se do něj, kolikátá skončila hráčova škola
 		self.result_label.pack()
-		self.prize_label=Label(self.soutez_okno,text="")
+		self.prize_label=Label(self.soutez_okno,text="") #prázdný label na info o tom, kolik peběz škola vyhrála
 		self.prize_label.pack()
-		self.ok_b=Button(self.soutez_okno,text="ok",command=self.soutez_okno.destroy)
+		self.ok_b=Button(self.soutez_okno,text="ok",command=self.soutez_okno.destroy) #potvrzovací tlačítko
 		self.ok_b.pack()
-		self.playerschool=randint(0,100)+int(self.competition_modifier)
-		self.pos_values=[]
+		self.playerschool=randint(0,100)+int(self.competition_modifier) #náhodné skóre pro školu hráče
+		self.pos_values=[] #prázdný seznam na hodnoty NPC škol i hráčovy školy
 		for i in range (0,100):	#aby NPC škola nemohla mít stejné skóre jako hráč
-			self.pos_values.append(i)
-		self.pos_values.remove(self.playerschool)
+			self.pos_values.append(i) #vygenerovaná čísla se dají prázdného seznamu
+		self.pos_values.remove(self.playerschool) #hodnota hráčovy školy se odebere ze seznamu, aby hráčova škola nemohla mít stejnou hodnotu jako NPC školy
 		
-		self.school1=self.pos_values[randint(0,len(self.pos_values)-1)]
+		self.school1=self.pos_values[randint(0,len(self.pos_values)-1)] #pro každou školu se vygeneruje náhodné číslo 
 		self.school2=self.pos_values[randint(0,len(self.pos_values)-1)]
 		self.school3=self.pos_values[randint(0,len(self.pos_values)-1)]
+		self.school4=self.pos_values[randint(0,len(self.pos_values)-1)]
+		self.school5=self.pos_values[randint(0,len(self.pos_values)-1)]
+		self.school6=self.pos_values[randint(0,len(self.pos_values)-1)]
 		
-		self.results=[self.playerschool,self.school1,self.school2,self.school3]
+		self.results=[self.playerschool,self.school1,self.school2,self.school3,self.school4,self.school5,self.school6] #všechny hodnoty škol se dají do seznamu 
 		
-		while (max(self.results)!=self.playerschool):
-			self.results.remove(max(self.results))
-			self.place+=1
+		while (max(self.results)!=self.playerschool): #cyklus zjišťující nejvyšší hodnotu ze seznamu výsledků
+			self.results.remove(max(self.results)) #nejvyšší hodnota se smaže ze seznamu
+			self.place+=1 #umístění školy se sníží
 			
-		self.prize=500*randint(1,50)
-		if self.place==2:
+		self.prize=500*randint(1,50) #náhodná peněžní výhra pro školu hráče
+		if self.place==2: #když škola neskončí první, peněží výhra se škáluje podle umístění
 			self.prize=self.prize*0.75
 		elif self.place==3:
 			self.prize=self.prize*0.5
-		elif self.place==4:
+		elif self.place==4 or self.place==5 or self.place==6 or self.place==7:
 			self.prize=self.prize*0
 			
-		if max(self.results)==self.playerschool:
+		if max(self.results)==self.playerschool: #když má hráčova škola nejvyšší hodnotu v seznamu, cyklus skončí a spustí se následující kód
 			self.result_label.config(text="Tvoje škola skončila "+str(self.place)+".")
 			self.prize_label.config(text="Získal jsi finanční odměnu v hodnotě "+str(self.prize))
-			self.penize=self.penize+self.prize
+			self.penize=self.penize+self.prize 
 			self.money_info.config(text="finance: " + str (self.penize)+"kč")
-			self.rodice_spokojenost+=5
+			self.rodice_spokojenost+=5 #úpravy spokojenosti
 			self.ucitele_spokojenost+=5 
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
 			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
 			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		
-	def random_event(self):
+	def random_event(self): #funkce simulující náhodné události
 		self.random_wndw=Toplevel()
 		self.random_wndw.grab_set()
-		self.event_type=randint(0,13)	
+		self.event_type=randint(0,13) #náhodně se vybere, jaká událost se stane
 		if self.event_type==0:
-			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu."
-			self.consequence1="peníze - "+str(40000+self.zaci_lvl*8000)
+			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu." #event text je proměnná použitá ve všech náhodných událostech, sloužící ke sdělení základní zprávy o tom, co se stalo
+			self.consequence1="peníze - "+str(40000+self.zaci_lvl*8000)  #self.consequence se používá ve všech náhodných událostech ke sdělení hráčí, jaké měla událost následky
 			self.consequence2="spokojenost rodičů - 10"
 			self.consequence3="spokojenost učitelů - 10"
 			self.consequence4="spokojenost žáků - 10"
-			self.penize=self.penize-(40000+self.zaci_lvl*8000)
+			self.penize=self.penize-(40000+self.zaci_lvl*8000) #po self.consequence se provedou všechny věci v self.consequence popsané
 			self.rodice_spokojenost=self.rodice_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
 			self.studenti_spokojenost=self.studenti_spokojenost-10
-			self.money_info.config(text="finance: " + str (self.penize)+"kč")
+			self.money_info.config(text="finance: " + str (self.penize)+"kč") #tady se změní labely
 			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
 			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
@@ -569,9 +552,9 @@ class main:
 			self.building_expenses.config(text="měsíční nájem: "+ str(self.najem)+"kč")
 		self.gen_label=Label(self.random_wndw,text=self.event_text)
 		self.gen_label.pack()
-		self.consequence_label=Label(self.random_wndw,text=self.consequence1)
+		self.consequence_label=Label(self.random_wndw,text=self.consequence1) #aspoň jeden následek je vždycky
 		self.consequence_label.pack()
-		if "self.consequence2" in locals():
+		if "self.consequence2" in locals(): #když byla dříve nadefinovaná proměnná na následky, vytvoří se o tom label
 			self.consequence2_label=Label(self.random_wndw,text=self.consequence2)
 			self.consequence2_label.pack()
 		if "self.consequence3" in locals():
