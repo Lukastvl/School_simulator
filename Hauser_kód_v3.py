@@ -2,8 +2,7 @@
 
 # jak restartovat program, aby nešlo hrát po prohře/výhře hráče
 # jinak lépe dynamicky vytvářet labely
-# mazání hodnot funkcí self.random_event() 
-# spokojenosti - navždycky int
+# mazání hodnot funkcí self.random_event()
 
 #spočítat a vybalancovat začáteční pozici hráče
 
@@ -16,17 +15,20 @@
 from random import randint
 from sys import exit
 from Tkinter import *
+import tkFont
+from PIL import Image
+
+
 
 #----------------------------------------------------------------------------------------------------------------
 #konstruktor
-
 class main:
 	def __init__(self):
 		
 #----------------------------------------------------------------------------------------------------------------
 #proměnné
 #----------------------------------------------------------------------------------------------------------------
-
+		
 		self.vzdel_souteze=[
 			"a soutěž v matematicu",	#seznam vědomostních meziškolních soutěží
 			"a biologická olympiáda",
@@ -86,42 +88,76 @@ class main:
 		
 		self.main=Tk()
 		self.main.attributes("-fullscreen", True) #fullscreen mode
-		
-		#tlačítka na hlavní obrazovce
-		
-		self.forward_button=Button(self.main, text="vpřed",command=self.vpred) #posune čas o týden vpřed 
-		self.forward_button.pack()
-		self.exit_button=Button(self.main, text="opustit hru", command=sys.exit) #ukončí hru
-		self.exit_button.pack()
-		self.money_button=Button(self.main, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
-		self.money_button.pack()
-		self.upgrade_button=Button(self.main,text="vylepšení",command=self.upgrades) #otevře okno s vylepšeními školního vybavení
-		self.upgrade_button.pack()
-		self.plat_button=Button(self.main,text="změnit platy",command=self.zmenit_platy) #otevře okno na změnu učitelských platů
-		self.plat_button.pack()
-		
+		self.screen_width = self.main.winfo_screenwidth()
+		self.screen_height = self.main.winfo_screenheight()
+		self.buttonFont=tkFont.Font(family="comic sans",size=24,weight=tkFont.BOLD)
 		#nápisy
 		
-		self.week_info=Label(self.main, text="týden: " + str (self.tyden)) #píše kolikátý je týden od začátku hry
-		self.week_info.pack()
-		self.money_info=Label(self.main, text="finance: " + str (self.penize)+"kč") #píše stav konta školy
-		self.money_info.pack()
-		self.studenti_info=Label(self.main,text="spokojenost studentů: " + str(self.studenti_spokojenost)) #píše spokojenost žáků
-		self.studenti_info.pack()
-		self.ucitele_info=Label(self.main,text="spokojenost učitelů: " + str(self.ucitele_spokojenost)) #píše spokojenost učitelů
-		self.ucitele_info.pack()
-		self.rodice_info=Label(self.main,text="spokojenost rodičů: " + str(self.rodice_spokojenost)) #píše spokojenost rodičů
-		self.rodice_info.pack()
-		self.teacher_count=Label(self.main,text="počet učitelů: "+str(self.pocet_ucitelu)) #píše počet učitelů na škole
-		self.teacher_count.pack()
-		self.teacher_salary=Label(self.main,text="plat učitel/měsíc: "+str(self.plat)+"kč") #píše plat na jednoho učitele
-		self.teacher_salary.pack()
-		self.student_count=Label(self.main,text="počet žáků: "+str(self.pocet_zaku)) #píše počet žáků
-		self.student_count.pack()
-		self.student_income=Label(self.main,text="školné žák/měsíc: "+str(self.castka)+"kč") #píše školné, které platí každý žák za měsíc
-		self.student_income.pack()
-		self.building_expenses=Label(self.main,text="měsíční nájem: "+ str(self.najem)+"kč") #píše měsíční nájem
-		self.building_expenses.pack()
+		self.label_frame=Frame(self.main) #rámeček kvůli grafickému rozmístění
+		self.label_frame.grid(row=1,column=1)
+		self.week_info=Label(self.label_frame, text="týden: " + str (self.tyden)) #píše kolikátý je týden od začátku hry
+		self.week_info.grid(column=0,row=0)
+		self.money_info=Label(self.label_frame, text="finance: " + str (self.penize)+"kč") #píše stav konta školy
+		self.money_info.grid(column=0,row=1)
+		self.teacher_count=Label(self.label_frame,text="počet učitelů: "+str(self.pocet_ucitelu)) #píše počet učitelů na škole
+		self.teacher_count.grid(column=0,row=2)
+		self.teacher_salary=Label(self.label_frame,text="plat učitel/měsíc: "+str(self.plat)+"kč") #píše plat na jednoho učitele
+		self.teacher_salary.grid(column=0,row=3)
+		self.student_count=Label(self.label_frame,text="počet žáků: "+str(self.pocet_zaku)) #píše počet žáků
+		self.student_count.grid(column=0,row=4)
+		self.student_income=Label(self.label_frame,text="školné žák/měsíc: "+str(self.castka)+"kč") #píše školné, které platí každý žák za měsíc
+		self.student_income.grid(column=0,row=5)
+		self.building_expenses=Label(self.label_frame,text="měsíční nájem: "+ str(self.najem)+"kč") #píše měsíční nájem
+		self.building_expenses.grid(column=0,row=6)
+
+		#spokojenosti
+		
+		self.sa_frame=Frame(self.main) #,pady=self.label_width-) #rámeček kvůli grafickému rozmístění
+		self.sa_frame.grid(row=1,column=0)
+		self.studenti_info=Label(self.sa_frame,text="spokojenost studentů: " + str(self.studenti_spokojenost)) #píše spokojenost žáků
+		self.studenti_info.grid(column=0,row=0)
+		self.ucitele_info=Label(self.sa_frame,text="spokojenost učitelů: " + str(self.ucitele_spokojenost)) #píše spokojenost učitelů
+		self.ucitele_info.grid(column=0,row=1)
+		self.rodice_info=Label(self.sa_frame,text="spokojenost rodičů: " + str(self.rodice_spokojenost)) #píše spokojenost rodičů
+		self.rodice_info.grid(column=0,row=2)
+	
+		#tlačítka na hlavní obrazovce
+		
+		self.button_frame=Frame(self.main) #,height=self.screen_height-self.sf_height) #rámeček kvůli grafickému rozmístění
+		self.button_frame.grid(row=0,column=0,pady=20,padx=20)
+		self.money_button=Button(self.button_frame,height=2,width=20,font=self.buttonFont, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
+		self.money_button.grid(column=0,row=2)
+		self.upgrade_button=Button(self.button_frame,height=4,width=20,padx=10,text="vylepšení",command=self.upgrades) #otevře okno s vylepšeními školního vybavení
+		self.upgrade_button.grid(column=0,row=3)
+		self.plat_button=Button(self.button_frame,height=4,width=20,text="změnit platy",command=self.zmenit_platy) #otevře okno na změnu učitelských platů
+		self.plat_button.grid(column=0,row=4)
+		
+		#obrázek
+		self.img=ImageTk.PhotoImage(Image.open("reditelna.jpg"))
+		self.img_label=Label(self.main,image=self.img)
+		self.img_label.grid(row=0,column=1)
+		
+		
+		#vpřed  a opustit hru
+		self.admin_frame=Frame(self.main)
+		self.admin_frame.grid(row=1,column=2)
+		self.forward_button=Button(self.admin_frame,height=5,width=25, text="vpřed",command=self.vpred) #posune čas o týden vpřed 
+		self.forward_button.grid(column=0,row=0)
+		self.exit_button=Button(self.admin_frame,width=25, text="opustit hru", command=sys.exit) #ukončí hru
+		self.exit_button.grid(column=0,row=1)
+		
+		self.main.update()
+		self.screen_width = self.main.winfo_screenwidth()
+		self.screen_height = self.main.winfo_screenheight()
+		#self.label_width=self.label_frame.winfo_width()
+		#self.sa_width=self.sa_frame.winfo_width()
+		#self.bt_height=self.button_frame.winfo_height()
+		#self.sa_height=self.sa_frame.winfo_height()
+		#self.v_indent=self.screen_height-self.bt_height-self.sa_height-10
+		#self.h_indent=self.screen_width-self.sa_width-self.label_width-10
+		#self.sa_frame.grid(row=1,column=0,padx=(10,self.v_indent),pady=(self.h_indent,10))
+
+		
 #----------------------------------------------------------------------------------------------------------------
 
 	def game_over_finance(self): #funkce na konec hry kvůli financím
@@ -143,13 +179,14 @@ class main:
 		#self.popup.wm_title("pozor")
 		self.label=Label(self.popup, text=msg)
 		self.label.pack(side="top",fill="x", pady=10)
-		self.b1=Button(self.popup,text="OK",command=self.popup.destroy) #ok tlačítko, zavírá popup
+		self.b1=Button(self.popup,text="OK",command=restart) #ok tlačítko, zavírá popup
 		self.b1.pack()
 		return
 	
 	def upgrades(self): #okno, kde se dá vylepšovat školní vybavení
 		self.upg=Toplevel()
 		self.upg.grab_set()
+		#self.upg.geometry("400x600")
 		#self.upg.attributes("-fullscreen",True)
 		
 		##info
@@ -295,7 +332,7 @@ class main:
 	
 	def vpred(self): #funkce posouvající čas o týden dopředu
 		self.tyden+=1
-		self.week_info.config(text="týden= " + str (self.tyden)) #mění číslo týdne v ukazateli v hlavním okně
+		self.week_info.config(text="týden: " + str (self.tyden)) #mění číslo týdne v ukazateli v hlavním okně
 		if self.tyden%44==0: #kontrola, jestli neskončil školní rok
 			self.tyden=self.tyden+7 #skok přes prázdniny
 		if self.tyden==104: #kontrola, jestli hráči neskončilo funkční obodobí
@@ -388,10 +425,12 @@ class main:
 			self.prize_label.config(text="Získal jsi finanční odměnu v hodnotě "+str(self.prize))
 			self.penize=self.penize+self.prize 
 			self.money_info.config(text="finance: " + str (self.penize)+"kč")
-			self.rodice_spokojenost+=5 #úpravy spokojenosti
-			self.ucitele_spokojenost+=5 
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			if self.place==1:
+				self.ucitele_spokojenost+=5
+				self.rodice_spokojenost+=5
+				self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+				self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			
 		
 	def random_event(self): #funkce simulující náhodné události
 		self.random_wndw=Toplevel()
@@ -568,3 +607,5 @@ class main:
 		
 lol=main()
 mainloop()
+
+
