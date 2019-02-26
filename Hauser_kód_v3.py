@@ -16,7 +16,7 @@ from random import randint
 from sys import exit
 from Tkinter import *
 import tkFont
-from PIL import Image
+
 
 
 
@@ -61,7 +61,7 @@ class main:
 		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		self.calm_week=0 #kolik týdnů se nekonala žádná meziškolní soutěž
-		self.penize=int(10000) #kolik má škola na účtě, integer aby se z toho nedělal float a na obrazovce nebylo x.0
+		self.penize=1000000000000000000 #kolik má škola na účtě, integer aby se z toho nedělal float a na obrazovce nebylo x.0
 		self.min_salary=12000 #minimální plat pro učitele
 		self.studenti_spokojenost=50
 		self.ucitele_spokojenost=50 #spokojenosti tří skupin osazenstva školy
@@ -90,6 +90,7 @@ class main:
 		self.main.attributes("-fullscreen", True) #fullscreen mode
 		self.screen_width = self.main.winfo_screenwidth()
 		self.screen_height = self.main.winfo_screenheight()
+		self.forwardbuttonfont=tkFont.Font(family="comic sans",size=24,weight=tkFont.BOLD)
 		self.buttonFont=tkFont.Font(family="comic sans",size=24,weight=tkFont.BOLD)
 		#nápisy
 		
@@ -131,12 +132,12 @@ class main:
 		self.upgrade_button.grid(column=0,row=3)
 		self.plat_button=Button(self.button_frame,height=4,width=20,text="změnit platy",command=self.zmenit_platy) #otevře okno na změnu učitelských platů
 		self.plat_button.grid(column=0,row=4)
-		
+		"""
 		#obrázek
 		self.img=ImageTk.PhotoImage(Image.open("reditelna.jpg"))
 		self.img_label=Label(self.main,image=self.img)
 		self.img_label.grid(row=0,column=1)
-		
+		"""
 		
 		#vpřed  a opustit hru
 		self.admin_frame=Frame(self.main)
@@ -179,10 +180,14 @@ class main:
 		#self.popup.wm_title("pozor")
 		self.label=Label(self.popup, text=msg)
 		self.label.pack(side="top",fill="x", pady=10)
-		self.b1=Button(self.popup,text="OK",command=restart) #ok tlačítko, zavírá popup
+		self.b1=Button(self.popup,text="OK",command=self.end) #ok tlačítko, zavírá popup
 		self.b1.pack()
 		return
 	
+	def end(self): #funkce uzavírající jak popupmsg, tak hru. Volá se při konci hry
+		self.popup.destroy()
+		self.main.destroy()
+		
 	def upgrades(self): #okno, kde se dá vylepšovat školní vybavení
 		self.upg=Toplevel()
 		self.upg.grab_set()
@@ -191,26 +196,26 @@ class main:
 		
 		##info
 		self.sport_info=Label(self.upg,text="úroveň sportovního vybavení: "+str(self.sport_level)) #info o levelu sportovního vybavení
-		self.sport_info.pack()
+		self.sport_info.grid(row=0,column=0)
 		self.veda_info=Label(self.upg,text="úroveň vědeckého vybavení: "+str(self.veda_level)) #info o levelu vědeckého vybavení
-		self.veda_info.pack()
+		self.veda_info.grid(row=0,column=1)
 		self.vedomosti_info=Label(self.upg,text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level)) #info o levelu učebního vybavení
-		self.vedomosti_info.pack()
+		self.vedomosti_info.grid(row=0,column=2)
 		self.kapacita_info=Label(self.upg,text="maximální kapacita žáků je: "+str(self.pocet_zaku)) #info o počtu žáků
-		self.kapacita_info.pack()
+		self.kapacita_info.grid(row=0,column=3)
 		
 		##tlačítka na vylepšení
 		self.sport_button=Button(self.upg,text="vylepšit sportovní vybavení",command=self.sport_upgrade) #tlačítko na vylepšení sportovního vybavení
-		self.sport_button.pack()
+		self.sport_button.grid(row=1,column=0)
 		self.veda_button=Button(self.upg,text="vylepšit vědecké vybavení",command=self.veda_upgrade) #tlačítko na vylepšení vědeckého vybavení 
-		self.veda_button.pack()
+		self.veda_button.grid(row=1,column=1)
 		self.vedomosti_button=Button(self.upg,text="vylepšit učební pomůcky",command=self.vedomosti_upgrade) #tlačítko na vylepšení učebních pomůcek
-		self.vedomosti_button.pack()
+		self.vedomosti_button.grid(row=1,column=2)
 		self.capacity_button=Button(self.upg,text="zvýšit kapacitu školy",command=self.expand) #tlačítko na zvětšení školy
-		self.capacity_button.pack()
+		self.capacity_button.grid(row=1,column=3)
 		##zpět
 		self.b1=Button(self.upg,text="zpět",command=self.upg.destroy) #tlačítko zavírající okno
-		self.b1.pack()
+		self.b1.grid(row=2,column=1)
 		return
 	
 	def expand(self): #funkce zvyšující kapacitu budovy
@@ -331,18 +336,21 @@ class main:
 			self.error_line.pack() #když je neplatná hodnota, objeví se chybová hláška
 	
 	def vpred(self): #funkce posouvající čas o týden dopředu
+		self.game_over=0
 		self.tyden+=1
 		self.week_info.config(text="týden: " + str (self.tyden)) #mění číslo týdne v ukazateli v hlavním okně
 		if self.tyden%44==0: #kontrola, jestli neskončil školní rok
 			self.tyden=self.tyden+7 #skok přes prázdniny
 		if self.tyden==104: #kontrola, jestli hráči neskončilo funkční obodobí
 			self.game_over_gut() # funkce na šťastný konec
-			return
+			self.game_over=1
 		if self.tyden%4==0:  #kontrola, zda škola nezkrachuje při placení nájmu nebo vyplácení platů na konci měsíce 
 			if (self.penize+self.skolne)-(self.vydaje_na_ucitele+self.najem)<0: #když je škola ke konci měsíce zadlužená, hráč prohrál
 				self.game_over_finance()
+				self.game_over=1
 			elif self.studenti_spokojenost<15 and self.ucitele_spokojenost<15 or self.studenti_spokojenost<15 and self.rodice_spokojenost<15 or self.rodice_spokojenost<15 and self.ucitele_spokojenost<15: #když jsou dvě skupiny ze tří vrcholně nespokojeny, ředitel bude k začátku příštího měsíce odvolán - hráč prohraje
 				self.game_over_odvolani()
+				self.game_over=1
 			else:
 				self.penize=self.penize-(self.vydaje_na_ucitele+self.najem)+self.skolne   #když škola nezkrachovala, tak se odečtou náklady
 				self.money_info.config(text="finance: " + str (self.penize)+"kč")
@@ -357,17 +365,17 @@ class main:
 			return
 		
 		##meziškolní soutěže 
-
-		if self.calm_week+randint(0,10)>=15: #algorytmus, který kombinuje náhodu a okolnosti. Rozhoduje o tom, jestli se spustí meziškolní soutěž
-			self.calm_week=0
-			self.competition()
-		else:
-			self.calm_week+=1
+		if self.game_over!=1:
+			if self.calm_week+randint(0,10)>=15: #algorytmus, který kombinuje náhodu a okolnosti. Rozhoduje o tom, jestli se spustí meziškolní soutěž
+				self.calm_week=0
+				self.competition()
+			else:
+				self.calm_week+=1
 		
 		##random events
-		
-		if randint(0,10)<4 and self.calm_week!=0: #algorytmus, který spouští náhodné události 
-			self.random_event()
+		if self.game_over!=1:
+			if randint(0,10)<4 and self.calm_week!=0: #algorytmus, který spouští náhodné události 
+				self.random_event()
 
 
 	def competition(self): #meziškolní soutěže
@@ -435,6 +443,14 @@ class main:
 	def random_event(self): #funkce simulující náhodné události
 		self.random_wndw=Toplevel()
 		self.random_wndw.grab_set()
+		"""
+		if "self.consequence2" in locals():
+			print self.consequence2
+		if "self.consequence3" in locals():
+			print self.consequence3
+		if "self.consequence4" in locals():
+			print self.consequence4
+		"""
 		self.event_type=randint(0,13) #náhodně se vybere, jaká událost se stane
 		if self.event_type==0:
 			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu." #event text je proměnná použitá ve všech náhodných událostech, sloužící ke sdělení základní zprávy o tom, co se stalo
@@ -490,7 +506,7 @@ class main:
 		elif self.event_type==4:
 			self.event_text="Navýšení minimální mzdy: Minimální mzda je odteď "+str(self.min_salary+800)
 			self.consequence1="spokojenost učitelů + 10"
-			self.spokojenost_ucitelu+=10
+			self.ucitele_spokojenost+=10
 			self.min_salary+=800
 			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
 		elif self.event_type==5:
