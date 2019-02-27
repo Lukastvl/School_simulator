@@ -16,6 +16,10 @@ from random import randint
 from sys import exit
 from Tkinter import *
 import tkFont
+from PIL import *
+
+
+
 
 #----------------------------------------------------------------------------------------------------------------
 #konstruktor
@@ -129,16 +133,13 @@ class main:
 		self.upgrade_button.grid(column=0,row=3)
 		self.plat_button=Button(self.button_frame,height=4,width=20,text="změnit platy",command=self.zmenit_platy) #otevře okno na změnu učitelských platů
 		self.plat_button.grid(column=0,row=4)
-		 
+		
+		
 		#obrázek
-		self.mainimage=PhotoImage(file="reditelna.gif")
-		self.imglabel=Label(self.main,image=self.mainimage)
-		self.imglabel.grid(row=0,column=1,columnspan=3)
-		""" 
-		self.img=ImageTk.PhotoImage(Image.open("reditelna.jpg"))
+		self.img=PhotoImage("reditelna.jpg")
 		self.img_label=Label(self.main,image=self.img)
 		self.img_label.grid(row=0,column=1)
-		"""
+		
 		
 		#vpřed  a opustit hru
 		self.admin_frame=Frame(self.main)
