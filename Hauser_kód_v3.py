@@ -1,14 +1,9 @@
 #coding: utf-8
 
-# jak restartovat program, aby nešlo hrát po prohře/výhře hráče
-# jinak lépe dynamicky vytvářet labely
-# mazání hodnot funkcí self.random_event()
-
 #spočítat a vybalancovat začáteční pozici hráče
 
-#!!!!!!předělat upgrady - na hlavní obrazovku?
-
 ##grafika
+#aby se widgety nehýbaly během hry
 
 #----------------------------------------------------------------------------------------------------------------
 #importy
@@ -16,7 +11,8 @@ from random import randint
 from sys import exit
 from Tkinter import *
 import tkFont
-from PIL import *
+#import PIL.Image
+from PIL import Image,ImageTk
 
 
 
@@ -91,43 +87,73 @@ class main:
 		self.main.attributes("-fullscreen", True) #fullscreen mode
 		self.screen_width = self.main.winfo_screenwidth()
 		self.screen_height = self.main.winfo_screenheight()
-		self.forwardbuttonfont=tkFont.Font(family="comic sans",size=24,weight=tkFont.BOLD)
+		
 		self.buttonFont=tkFont.Font(family="comic sans",size=24,weight=tkFont.BOLD)
+		
 		#nápisy
+		
+		self.label_font=tkFont.Font(family="comic sans",size=22) #font na nápisy
+		#self.int_font=tkFont.Font(family="comic sans",size=22,weight=tkFont.BOLD) #font na čísla u nápisů
+		
 		
 		self.label_frame=Frame(self.main) #rámeček kvůli grafickému rozmístění
 		self.label_frame.grid(row=1,column=1)
-		self.week_info=Label(self.label_frame, text="týden: " + str (self.tyden)) #píše kolikátý je týden od začátku hry
-		self.week_info.grid(column=0,row=0)
-		self.money_info=Label(self.label_frame, text="finance: " + str (self.penize)+"kč") #píše stav konta školy
-		self.money_info.grid(column=0,row=1)
-		self.teacher_count=Label(self.label_frame,text="počet učitelů: "+str(self.pocet_ucitelu)) #píše počet učitelů na škole
-		self.teacher_count.grid(column=0,row=2)
-		self.teacher_salary=Label(self.label_frame,text="plat učitel/měsíc: "+str(self.plat)+"kč") #píše plat na jednoho učitele
-		self.teacher_salary.grid(column=0,row=3)
-		self.student_count=Label(self.label_frame,text="počet žáků: "+str(self.pocet_zaku)) #píše počet žáků
-		self.student_count.grid(column=0,row=4)
-		self.student_income=Label(self.label_frame,text="školné žák/měsíc: "+str(self.castka)+"kč") #píše školné, které platí každý žák za měsíc
-		self.student_income.grid(column=0,row=5)
-		self.building_expenses=Label(self.label_frame,text="měsíční nájem: "+ str(self.najem)+"kč") #píše měsíční nájem
-		self.building_expenses.grid(column=0,row=6)
+		self.week_info=Label(self.label_frame,font=self.label_font, text="týden: ") #píše kolikátý je týden od začátku hry
+		self.week_info.grid(column=0,row=0,sticky=W)
+		self.week_int=Label(self.label_frame,font=self.label_font,fg="red",text=self.tyden)
+		self.week_int.grid(column=1,row=0,sticky=W)
+		self.money_info=Label(self.label_frame,font=self.label_font, text="finance: ") #píše stav konta školy
+		self.money_info.grid(column=0,row=1,sticky=W)
+		self.money_int=Label(self.label_frame,font=self.label_font,fg="red",text=self.penize)
+		self.money_int.grid(column=1,row=1,sticky=W)
+		self.teacher_count=Label(self.label_frame,font=self.label_font,text="počet učitelů: ") #píše počet učitelů na škole
+		self.teacher_count.grid(column=0,row=2,sticky=W)
+		self.teacher_int=Label(self.label_frame,font=self.label_font,fg="red",text=self.pocet_ucitelu)
+		self.teacher_int.grid(column=1,row=2,sticky=W)
+		self.teacher_salary=Label(self.label_frame,font=self.label_font,text="plat učitel/měsíc: ") #píše plat na jednoho učitele
+		self.teacher_salary.grid(column=0,row=3,sticky=W)
+		self.teacher_sint=Label(self.label_frame,font=self.label_font,fg="red",text=self.plat)
+		self.teacher_sint.grid(column=1,row=3,sticky=W)
+		self.student_count=Label(self.label_frame,font=self.label_font,text="počet žáků: ") #píše počet žáků
+		self.student_count.grid(column=0,row=4,sticky=W)
+		self.student_int=Label(self.label_frame,font=self.label_font,fg="red",text=self.pocet_zaku)
+		self.student_int.grid(column=1,row=4,sticky=W)
+		self.student_income=Label(self.label_frame,font=self.label_font,text="školné žák/měsíc: ") #píše školné, které platí každý žák za měsíc
+		self.student_income.grid(column=0,row=5,sticky=W)
+		self.student_iint=Label(self.label_frame,font=self.label_font,fg="red",text=self.castka)
+		self.student_iint.grid(column=1,row=5,sticky=W)
+		self.building_expenses=Label(self.label_frame,font=self.label_font,text="měsíční nájem: ") #píše měsíční nájem
+		self.building_expenses.grid(column=0,row=6,sticky=W)
+		self.building_int=Label(self.label_frame,font=self.label_font,fg="red",text=self.najem)
+		self.building_int.grid(column=1,row=6,sticky=W)
 
 		#spokojenosti
 		
 		self.sa_frame=Frame(self.main) #,pady=self.label_width-) #rámeček kvůli grafickému rozmístění
 		self.sa_frame.grid(row=1,column=0)
-		self.studenti_info=Label(self.sa_frame,text="spokojenost studentů: " + str(self.studenti_spokojenost)) #píše spokojenost žáků
+		self.studenti_info=Label(self.sa_frame,text="spokojenost studentů: ")# + str(self.studenti_spokojenost)) #píše spokojenost žáků
 		self.studenti_info.grid(column=0,row=0)
-		self.ucitele_info=Label(self.sa_frame,text="spokojenost učitelů: " + str(self.ucitele_spokojenost)) #píše spokojenost učitelů
+		self.ucitele_info=Label(self.sa_frame,text="spokojenost učitelů: ")# + str(self.ucitele_spokojenost)) #píše spokojenost učitelů
 		self.ucitele_info.grid(column=0,row=1)
-		self.rodice_info=Label(self.sa_frame,text="spokojenost rodičů: " + str(self.rodice_spokojenost)) #píše spokojenost rodičů
+		self.rodice_info=Label(self.sa_frame,text="spokojenost rodičů: ")# + str(self.rodice_spokojenost)) #píše spokojenost rodičů
 		self.rodice_info.grid(column=0,row=2)
-	
+		self.studenti_canvas=Canvas(self.sa_frame,background="white",width=200, height=15)
+		self.stangle=self.studenti_canvas.create_rectangle(0,0,self.studenti_spokojenost*2,17,fill="green",width=0)
+		self.stext=self.studenti_canvas.create_text(94,2,anchor=NW,text=self.studenti_spokojenost)
+		self.studenti_canvas.grid(column=1,row=0)
+		self.ucitele_canvas=Canvas(self.sa_frame,background="white",width=200,height=15)
+		self.utangle=self.ucitele_canvas.create_rectangle(0,0,self.ucitele_spokojenost*2,17,fill="green",width=0)
+		self.utext=self.ucitele_canvas.create_text(94,2,anchor=NW,text=self.ucitele_spokojenost)
+		self.ucitele_canvas.grid(column=1,row=1)
+		self.rodice_canvas=Canvas(self.sa_frame,background="white",width=200,height=15)
+		self.rtangle=self.rodice_canvas.create_rectangle(0,0,self.rodice_spokojenost*2,17,fill="green",width=0)
+		self.rtext=self.rodice_canvas.create_text(94,2,anchor=NW,text=self.rodice_spokojenost)
+		self.rodice_canvas.grid(column=1,row=2)
 		#tlačítka na hlavní obrazovce
 		
 		self.button_frame=Frame(self.main) #,height=self.screen_height-self.sf_height) #rámeček kvůli grafickému rozmístění
 		self.button_frame.grid(row=0,column=0,pady=20,padx=20)
-		self.money_button=Button(self.button_frame,height=2,width=20,font=self.buttonFont, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
+		self.money_button=Button(self.button_frame,height=1,width=10,font=self.buttonFont, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
 		self.money_button.grid(column=0,row=2)
 		self.upgrade_button=Button(self.button_frame,height=4,width=20,padx=10,text="vylepšení",command=self.upgrades) #otevře okno s vylepšeními školního vybavení
 		self.upgrade_button.grid(column=0,row=3)
@@ -136,17 +162,31 @@ class main:
 		
 		
 		#obrázek
+		#self.image=Image.open("reditelna.jpg")
+		self.image=Image.open("reditelna.jpg")
+		self.img=ImageTk.PhotoImage(self.image)
+		self.img_label=Label(self.main,image=self.img)
+		self.img_label.image=self.img
+		self.img_label.grid(row=0,column=1,columnspan=2)
+		"""
 		self.img=PhotoImage("reditelna.jpg")
 		self.img_label=Label(self.main,image=self.img)
+		self.img_label=self.img
 		self.img_label.grid(row=0,column=1)
-		
+		"""
 		
 		#vpřed  a opustit hru
 		self.admin_frame=Frame(self.main)
 		self.admin_frame.grid(row=1,column=2)
-		self.forward_button=Button(self.admin_frame,height=5,width=25, text="vpřed",command=self.vpred) #posune čas o týden vpřed 
+		
+		#tlačítko vpřed
+		self.forwardbuttonfont=tkFont.Font(family="comic sans",size=36,weight=tkFont.BOLD)
+		self.forward_button=Button(self.admin_frame,height=2,width=18,font=self.forwardbuttonfont, text="vpřed",command=self.vpred) #posune čas o týden vpřed 
 		self.forward_button.grid(column=0,row=0)
-		self.exit_button=Button(self.admin_frame,width=25, text="opustit hru", command=sys.exit) #ukončí hru
+		
+		#tlačítko opustit hru
+		self.leavebuttonfont=tkFont.Font(family="comic sans",size=14,weight=tkFont.BOLD)
+		self.exit_button=Button(self.admin_frame,width=45,font=self.leavebuttonfont, text="opustit hru", command=sys.exit) #ukončí hru
 		self.exit_button.grid(column=0,row=1)
 		
 		self.main.update()
@@ -222,81 +262,100 @@ class main:
 	
 	def expand(self): #funkce zvyšující kapacitu budovy
 		self.penize=self.penize-((self.zaci_lvl+1)*1050000) #počítání ceny na základě stávajícího počtu žáků
-		self.money_info.config(text="finance: " + str (self.penize)+"kč")
+		self.money_int.config(text=self.penize)
 		self.zaci_lvl+=1 
 		self.ucitele_spokojenost-=5 #sníží spokojenost učitelů, protože nemají rádi na starost víc lidí
-		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+		self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+		self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		self.pocet_zaku+=40 #přidá kapacitu škole (+40 žáků)
 		self.kapacita_info.config(text="maximální kapacita žáků je: "+str(self.pocet_zaku))
 	
 	def sport_upgrade(self): #funkce zvyšující úroveň sportovního vybavení
 		self.penize=self.penize-((self.sport_level+1)*10000) #počítání ceny a odečítání peněz na základě stávajícího lvlu vybavení
-		self.money_info.config(text="finance: " + str (self.penize)+"kč")
+		self.money_int.config(text=self.penize)
 		self.sport_level+=1
 		self.studenti_spokojenost+=10  #úpravy spokojeností
 		self.rodice_spokojenost+=5
 		self.ucitele_spokojenost+=5
-		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))  #úpravy infolabelů v hlavním okně
-		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+		self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+		self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+		self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+		self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+		self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+		self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		self.sport_info.config(text="úroveň sportovního vybavení: "+str(self.sport_level))
-		self.money_info.config(text=str(self.penize))
 		return
 	
 	def veda_upgrade(self): #funkce zvyšující úroveň vědeckého vybavení
 		self.penize=self.penize-((self.veda_level+1)*10000) #dynamciká cena odvíjející se od současného lvlu vybavení
-		self.money_info.config(text="finance: " + str (self.penize)+"kč")
+		self.money_int.config(text=self.penize)
 		self.veda_level+=1
 		self.studenti_spokojenost+=5
 		self.rodice_spokojenost+=5
 		self.ucitele_spokojenost+=10
-		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+		self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+		self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+		self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+		self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+		self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+		self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		self.veda_info.config(text="úroveň vědeckého vybavení: "+str(self.veda_level))
-		self.money_info.config(text=str(self.penize))
 		return
 		
-	def vedomosti_upgrade(self):
+	def vedomosti_upgrade(self): #funkce zvyšující úroveň učebních pomůcek
 		self.penize=self.penize-((self.vedomosti_level+1)*10000)
-		self.money_info.config(text="finance: " + str (self.penize)+"kč")
+		self.money_int.config(text=self.penize)
 		self.vedomosti_level+=1
 		self.studenti_spokojenost+=5
 		self.rodice_spokojenost+=10
 		self.ucitele_spokojenost+=5
-		self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-		self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-		self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+		self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+		self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+		self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+		self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+		self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+		self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		self.vedomosti_info.config(text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level))
-		self.money_info.config(text=str(self.penize))
 		return
 		
 
 	def zmenit_skolne(self): #definuje okno, které umožňuje měnit školné 
 		self.skol=Toplevel()
 		self.skol.grab_set() #
-		self.skol.geometry("500x150+50+50")
+		#self.skol.geometry("500x150+50+50")
 		self.infolabel=Label(self.skol, text="stávající školné na žáka na měsíc je "+str(self.castka)+" kč")
-		self.infolabel.pack()
+		self.infolabel.grid(column=1,row=0,columnspan=2)
 		self.low=Label(self.skol,text="moc nízká hondota") #definice textu pro případ zadání neplatné hodnoty hráčem
 		self.high=Label(self.skol,text="moc vysoká hodnota")
-		self.s_entry=Entry(self.skol, width=150)
-		self.s_entry.pack()
+		self.s_entry=Entry(self.skol)#, width=150)
+		self.s_entry.grid(column=1,row=1,columnspan=2)
 		self.s_entry.focus_set() #aby se hned po otevření okna dalo psát do Entry
 		self.b1=Button(self.skol, text="Storno", command=self.skol.destroy) #tlačítka
-		self.b1.pack()
+		self.b1.grid(column=0,row=1)
 		self.b2=Button(self.skol,text="Potvrdit", command=self.s_zmen)
-		self.b2.pack()
+		self.b2.grid(column=0,row=0)
 		#return self.skol
 		
 	def s_zmen(self): #funkce měnící výši školného
 		self.s_output=int(self.s_entry.get()) #vyčtení hodnoty z Entry 
 		if (self.s_output>400)and(self.s_output<1500): #kontrola jestli je zadaná hodnota v povoleném rozmezí
+			if self.s_output>self.castka:
+				self.i=(self.s_output-self.castka)/100
+				if self.i==0:
+					self.i=1				
+				self.rodice_spokojenost=self.rodice_spokojenost+self.i #anticheese
+				self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+				self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)
+			elif self.s_output<self.castka:
+				self.i=(self.castka-self.s_output)/100
+				if self.i==0:
+					self.i=1
+				self.rodice_spokojenost=self.rodice_spokojenost-self.i #anticheese
+				self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+				self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)
 			self.castka=self.s_output
-			self.student_income.config(text="školné žák/měsíc: "+str(self.castka)+"kč")	
-			self.student_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.skol.destroy() 
-			#self.potvrzeni=Label(self.ent, text="školné aktualizováno")
+			self.student_income.config(text="školné žák/měsíc: "+str(self.castka)+"kč")
+			self.skol.destroy()
 		elif (self.s_output<400): #když je zadaná hodnota moc nízká, napíše hlášku nadefinovanou v self.zmenit_skolne
 			self.low.pack()
 		elif (self.s_output>1500): #když je zadaná hodnota moc vysoká napíše hlášku nadefinovanou v self.zmenit_skolne
@@ -325,11 +384,19 @@ class main:
 		self.p_output=int(self.p_entry.get()) #vyčtení hodnoty zadané hráčem
 		if (self.p_output>self.min_salary): #kontrola, zda je zadaná hodnota nad minimálním platem
 			if self.p_output>self.plat:
-				self.ucitele_spokojenost+=(self.p_output-self.plat)/300 #algorytmus měnící spokojenost učitelů v závislosti na tom, jestli jim bylo přidáno, nebo ubráno
-				self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			else:
-				self.ucitele_spokojenost-=(self.plat-self.p_output)/300
-				self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+				self.i=(self.p_output-self.plat)/300
+				if self.i==0:
+					self.i=1
+				self.ucitele_spokojenost=self.ucitele_spokojenost+self.i #algorytmus měnící spokojenost učitelů v závislosti na tom, jestli jim bylo přidáno, nebo ubráno
+				self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+				self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
+			elif self.p_output<self.plat:
+				self.i=(self.plat-self.p_output)/300
+				if self.i==0:
+					self.i=1
+				self.ucitele_spokojenost=self.ucitele_spokojenost-self.i
+				self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+				self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 			self.plat=self.p_output
 			self.teacher_salary.config(text="plat učitel/měsíc: "+str(self.plat)+"kč") 
 			self.plat_wndw.destroy() #konec změny, zavření okna
@@ -438,8 +505,10 @@ class main:
 			if self.place==1:
 				self.ucitele_spokojenost+=5
 				self.rodice_spokojenost+=5
-				self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
-				self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+				self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+				self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+				self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+				self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 			
 		
 	def random_event(self): #funkce simulující náhodné události
@@ -461,13 +530,16 @@ class main:
 			self.consequence3="spokojenost učitelů - 10"
 			self.consequence4="spokojenost žáků - 10"
 			self.penize=self.penize-(40000+self.zaci_lvl*8000) #po self.consequence se provedou všechny věci v self.consequence popsané
-			self.rodice_spokojenost=self.rodice_spokojenost-10
-			self.ucitele_spokojenost=self.ucitele_spokojenost-10
-			self.studenti_spokojenost=self.studenti_spokojenost-10
+			self.rodice_spokojenost-=10
+			self.ucitele_spokojenost-=10
+			self.studenti_spokojenost-=10
 			self.money_info.config(text="finance: " + str (self.penize)+"kč") #tady se změní labely
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==1:
 			self.event_text="Vypověděl službu jeden z kotlů na teplou vodu. Ve škole teče jen studená voda a je třeba urychleně investovat do nového kotle."
 			self.consequence1="peníze - 100000"
@@ -477,8 +549,10 @@ class main:
 			self.studenti_spokojenost=self.studenti_spokojenost-10
 			self.ucitele_spokojenost=self.ucitele_spokojenost-10
 			self.money_info.config(text="finance: " + str (self.penize)+"kč")
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==2:
 			self.event_text="Studenti vytopili záchody, je třeba je opravit a potrestat viníky"
 			self.consequence1="peníze - 5000"
@@ -490,9 +564,12 @@ class main:
 			self.ucitele_spokojenost+=5
 			self.rodice_spokojenost-=5
 			self.money_info.config(text="finance: " + str (self.penize)+"kč")
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==3:
 			self.event_text="Výpadek elektřiny, studenti i učitelé šli dřív domů"
 			self.consequence1="spokojenost studentů + 5"
@@ -502,15 +579,19 @@ class main:
 			self.ucitele_spokojenost+=5
 			self.rodice_spokojenost-=5
 			self.money_info.config(text="finance: " + str (self.penize)+"kč")
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==4:
 			self.event_text="Navýšení minimální mzdy: Minimální mzda je odteď "+str(self.min_salary+800)
 			self.consequence1="spokojenost učitelů + 10"
 			self.ucitele_spokojenost+=10
 			self.min_salary+=800
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==5:
 			self.event_text="Stala se nehoda v chemické laboratoři, bude nepoužitelná, dokud se neopraví"
 			self.consequence1="level vědeckého vybavení - 1"
@@ -521,9 +602,12 @@ class main:
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==6:
 			self.event_text="Při kontrole se zjistilo, že školní učebnice jsou zastaralé a velké množství se jich muselo vyhodit"
 			self.consequence1="level učebního vybavení - 1"
@@ -534,9 +618,12 @@ class main:
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==7:
 			self.event_text="Při velké bouřce se zničilo školní multifunkční hřiště"
 			self.consequence1="level sportovního vybavení - 1"
@@ -547,9 +634,12 @@ class main:
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==8:
 			self.event_text="škola obrdžela grant na sportovní vybavení"
 			self.consequence1="level sportovního vybavení + 1"
@@ -560,9 +650,12 @@ class main:
 			self.ucitele_spokojenost+=5
 			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==9:
 			self.event_text="škola obrdžela grant na vědecké vybavení"
 			self.consequence1="level vědeckého vybavení + 1"
@@ -573,9 +666,12 @@ class main:
 			self.ucitele_spokojenost+=5
 			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==10:
 			self.event_text="škola obrdžela grant na učební vybavení"
 			self.consequence1="level vědeckého vybavení + 1"
@@ -586,9 +682,12 @@ class main:
 			self.ucitele_spokojenost+=5
 			self.studenti_spokojenost+=5
 			self.rodice_spokojenost+=5
-			self.ucitele_info.config(text="spokojenost učitelů: " + str(self.ucitele_spokojenost))
-			self.studenti_info.config(text="spokojenost studentů: " + str(self.studenti_spokojenost))
-			self.rodice_info.config(text="spokojenost rodičů: " + str(self.rodice_spokojenost))
+			self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
+			self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)  #úpravy ukazatelů na hlavní obrazovce
+			self.rodice_canvas.coords(self.rtangle,0,0,self.rodice_spokojenost*2,17)
+			self.rodice_canvas.itemconfigure(self.rtext,text=self.rodice_spokojenost)
+			self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
+			self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		elif self.event_type==11:
 			self.h=randint(1,30)*1000
 			self.event_text="škola obdržela mimořádnou dotaci"
