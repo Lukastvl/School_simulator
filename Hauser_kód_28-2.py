@@ -167,7 +167,8 @@ class main:
 		self.upgrade_button.grid(column=0,row=3,sticky=E+W)
 		self.plat_button=Button(self.button_frame,height=2,font=self.buttonFont,text="změnit platy",command=self.zmenit_platy) #otevře okno na změnu učitelských platů
 		self.plat_button.grid(column=0,row=4,sticky=E+W)
-		
+		self.trophy_button=Button(self.button_frame,height=2,font=self.buttonFont,text="skříňka s trofejemi",command=self.trophies) #otevírá okno se školními poháry
+		self.trophy_button.grid(column=0,row=5,sticky=E+W)
 		
 		#obrázek
 		self.image=Image.open("reditelna.jpg")
@@ -203,7 +204,8 @@ class main:
 
 		
 #----------------------------------------------------------------------------------------------------------------
-
+	def refresh(self): #funkce kontrolující obsah okna
+self.week_int=Label(self.label_frame,font=self.label_font,fg="red",text=self.tyden)	
 	def game_over_finance(self): #funkce na konec hry kvůli financím
 		self.popupmsg("konec hry, Škola zkrachovala, zkus to znovu")
 		return
@@ -226,6 +228,11 @@ class main:
 		self.b1=Button(self.popup,text="OK",command=self.end) #ok tlačítko, zavírá popup
 		self.b1.pack()
 		return
+	
+	def trophies(self):
+		self.trp=Toplevel()
+		self.trp.grab_set()
+		self.tph_label=Label()
 	
 	def end(self): #funkce uzavírající jak popupmsg, tak hru. Volá se při konci hry
 		self.popup.destroy()
@@ -472,7 +479,8 @@ class main:
 		##random events
 		if self.game_over!=1:
 			if randint(0,10)<4 and self.calm_week!=0: #algorytmus, který spouští náhodné události 
-				self.random_event()
+				self.kek=randint(0,13)
+				self.random_event(self.kek)
 
 
 	def competition(self): #meziškolní soutěže
@@ -539,17 +547,23 @@ class main:
 				self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 			
 		
-	def random_event(self): #funkce simulující náhodné události
+	def random_event(self,eve): #funkce simulující náhodné události
+		self.event=eve
+		if self.event<
+		
+		
+		
+		"""
 		self.random_wndw=Toplevel()
 		self.random_wndw.grab_set()
-		"""
+		
 		if "self.consequence2" in locals():
 			print self.consequence2
 		if "self.consequence3" in locals():
 			print self.consequence3
 		if "self.consequence4" in locals():
 			print self.consequence4
-		"""
+		
 		self.event_type=randint(0,13) #náhodně se vybere, jaká událost se stane
 		if self.event_type==0:
 			self.event_text="Školní inspekce odhalila vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu." #event text je proměnná použitá ve všech náhodných událostech, sloužící ke sdělení základní zprávy o tom, co se stalo
@@ -769,7 +783,7 @@ class main:
 			self.consequence4_label.grid(row=5,column=0)
 		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
 		self.ok.grid(row=6,column=0,sticky=E+W)
-		
+		"""
 lol=main()
 mainloop()
 
