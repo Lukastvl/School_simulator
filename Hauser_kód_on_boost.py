@@ -31,13 +31,13 @@ class main:
 #----------------------------------------------------------------------------------------------------------------
 		
 		self.vzdel_souteze=[
-			"a soutěž v matematicu",	#seznam vědomostních meziškolních soutěží
-			"a biologická olympiáda",
-			"a matematická olympiáda",
-			"a fyzikální olympiáda",
-			" matematický klokan",
-			"a soutěž Pražský glóbus",
-			"a zeměpisná olympiáda",
+			" soutěž v matematicu",	#seznam vědomostních meziškolních soutěží
+			" biologická olympiáda",
+			" matematická olympiáda",
+			" fyzikální olympiáda",
+			" soutěž matematický klokan",
+			" soutěž Pražský glóbus",
+			" zeměpisná olympiáda",
 		]
 		
 		self.sport_souteze=[   #seznam sportovních meziškolních soutěží
@@ -51,14 +51,16 @@ class main:
 		]
 		
 		self.veda_souteze=[ #seznam vědeckých meziškolních soutěží
-			"a soutěž v rychlomíchání chemických sloučenin",
-			"a robosoutěž",
-			"a soutěž školních časopisů",
-			"a soutěž v navrhování fyzikálních experimentů",
-			"a soutěž mladých inženýrů",
-			"a soutěž mladých designérů",
-			"a soutěž v rychlopitvách ježků",
+			" soutěž v rychlomíchání chemických sloučenin",
+			" robosoutěž",
+			" soutěž školních časopisů",
+			" soutěž v navrhování fyzikálních experimentů",
+			" soutěž mladých inženýrů",
+			" soutěž mladých designérů",
+			" soutěž v rychlopitvách ježků",
 		]
+		
+		self.trophy_list=[]
 		
 		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		self.calm_week=0 #kolik týdnů se nekonala žádná meziškolní soutěž
@@ -160,7 +162,7 @@ class main:
 		#tlačítka na hlavní obrazovce
 		
 		self.button_frame=Frame(self.main) #,height=self.screen_height-self.sf_height) #rámeček kvůli grafickému rozmístění
-		self.button_frame.grid(row=0,column=2)#,sticky=N+E+S+W)#,pady=20,padx=20)
+		self.button_frame.grid(row=0,column=2,sticky=E+W)#,sticky=N+E+S+W)#,pady=20,padx=20)
 		self.money_button=Button(self.button_frame,height=2,font=self.buttonFont, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
 		self.money_button.grid(column=0,row=2,sticky=E+W)
 		self.upgrade_button=Button(self.button_frame,height=2,font=self.buttonFont,text="vylepšení",command=self.upgrades) #otevře okno s vylepšeními školního vybavení
@@ -179,7 +181,7 @@ class main:
 
 		#vpřed  a opustit hru
 		self.admin_frame=Frame(self.main)
-		self.admin_frame.grid(row=2,column=2,sticky=S+W+E+N)
+		self.admin_frame.grid(row=2,column=2,sticky=W+E)
 		
 		#tlačítko vpřed
 		self.forwardbuttonfont=tkFont.Font(family="comic sans",size=36,weight=tkFont.BOLD)
@@ -248,8 +250,14 @@ class main:
 	def trophies(self):
 		self.trp=Toplevel()
 		self.trp.grab_set()
-		self.tph_label=Label()
-	
+		self.row_index=0
+		self.list_len=len(self.trophy_list)
+		for	x in range (len(self.trophy_list)):
+			self.trp_lbl=Label(self.trp,text=self.trophy_list[x])
+			self.trp_lbl.grid(row=self.row_index,column=0)
+			self.row_index+=1
+			
+		
 	def end(self): #funkce uzavírající jak popupmsg, tak hru. Volá se při konci hry
 		self.popup.destroy()
 		self.main.destroy()
@@ -257,8 +265,6 @@ class main:
 	def upgrades(self): #okno, kde se dá vylepšovat školní vybavení
 		self.upg=Toplevel()
 		self.upg.grab_set()
-		#self.upg.geometry("400x600")
-		#self.upg.attributes("-fullscreen",True)
 		
 		##info
 		self.sport_frame=Frame(self.upg)
@@ -477,11 +483,11 @@ class main:
 
 		self.soutez_okno=Toplevel() #definice okna pro soutěže
 		self.soutez_okno.grab_set()
-		self.soutez_label=Label(self.soutez_okno,text="V týdnu se konal"+str(self.competition_type))
+		self.soutez_label=Label(self.soutez_okno,text=str(self.competition_type)+"!")
 		self.soutez_label.pack()
 		self.result_label=Label(self.soutez_okno,text="") #prázdný label, přidá se do něj, kolikátá skončila hráčova škola
 		self.result_label.pack()
-		self.prize_label=Label(self.soutez_okno,text="") #prázdný label na info o tom, kolik peběz škola vyhrála
+		self.prize_label=Label(self.soutez_okno,text="") #prázdný label na info o tom, kolik peněz škola vyhrála
 		self.prize_label.pack()
 		self.ok_b=Button(self.soutez_okno,text="ok",command=self.soutez_okno.destroy) #potvrzovací tlačítko
 		self.ok_b.pack()
@@ -492,7 +498,7 @@ class main:
 		self.pos_values.remove(self.playerschool) #hodnota hráčovy školy se odebere ze seznamu, aby hráčova škola nemohla mít stejnou hodnotu jako NPC školy
 		
 		self.school1=self.pos_values[randint(0,len(self.pos_values)-1)] #pro každou školu se vygeneruje náhodné číslo 
-		self.school2=self.pos_values[randint(0,len(self.pos_values)-1)]
+		self.school2=self.pos_values[randint(0,len(self.pos_values)-1)]	#ze seznamu, aby neměly školy stejné hodnoty
 		self.school3=self.pos_values[randint(0,len(self.pos_values)-1)]
 		self.school4=self.pos_values[randint(0,len(self.pos_values)-1)]
 		self.school5=self.pos_values[randint(0,len(self.pos_values)-1)]
@@ -520,7 +526,9 @@ class main:
 				self.ucitele_spokojenost+=5
 				self.rodice_spokojenost+=5
 				self.refresh() #upravit všechny nápisy v hlavním okně
-			
+			if self.place<=3:
+				self.exito=str(self.place)+". místo -"+str(self.competition_type)
+				self.trophy_list.append(self.exito)
 		
 	def random_event(self,eve): #funkce simulující náhodné události
 		self.event=eve
@@ -612,7 +620,6 @@ class main:
 		self.ok.grid(row=2,column=0,sticky=E+W)
 		return
 		
-		
 	def event_class2(self,txt,clr,cons1,cons2):
 		self.refresh()
 		self.random_wndw=Toplevel()
@@ -627,13 +634,7 @@ class main:
 		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
 		self.ok.grid(row=3,column=0,sticky=E+W)
 		return
-		"""
-		self.event_text2=txt
-		self.event_clr2=clr
-		self.cons1_2=cons1
-		self.cons2_2=cons2
-		self.random_window()
-		"""
+		
 	def event_class3(self,txt,clr,cons1,cons2,cons3):
 		self.refresh()
 		self.random_wndw=Toplevel()
@@ -650,14 +651,7 @@ class main:
 		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
 		self.ok.grid(row=4,column=0,sticky=E+W)
 		return
-		"""
-		self.event_text3=txt
-		self.event_clr3=clr
-		self.cons1_3=cons1
-		self.cons2_3=cons2
-		self.cons3_3=cons3
-		self.random_window()
-		"""
+		
 	def event_class4(self,txt,clr,cons1,cons2,cons3,cons4):
 		self.refresh()
 		self.random_wndw=Toplevel()
@@ -676,62 +670,7 @@ class main:
 		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
 		self.ok.grid(row=5,column=0,sticky=E+W)
 		return
-		"""
-		self.event_text4=txt
-		self.event_clr4=clr
-		self.cons1_4=cons1
-		self.cons2_4=cons2
-		self.cons3_4=cons3
-		self.cons4_4=cons4
-		self.random_window()
 
-
-	def random_window():
-		self.random_wndw=Toplevel()
-		
-		
-		
-		
-		self.gen_label=Label(self.random_wndw,bg=self.back,text=self.event_text)
-		self.gen_label.grid(row=1,column=0)
-		self.consequence_label=Label(self.random_wndw,bg=self.back,text=self.consequence1) #aspoň jeden následek je vždycky
-		self.consequence_label.grid(row=2,column=0)
-		if "self.consequence2" in locals(): #když byla dříve nadefinovaná proměnná na následky, vytvoří se o tom label
-			self.consequence2_label=Label(self.random_wndw,bg=self.back,text=self.consequence2)
-			self.consequence2_label.grid(row=3,column=0)
-		if "self.consequence3" in locals():
-			self.consequence3_label=Label(self.random_wndw,bg=self.back,text=self.consequence3)
-			self.consequence3_label.grid(row=4,column=0)
-		if "self.consequence4" in locals():
-			self.consequence4_label=Label(self.random_wndw,bg=self.back,text=self.consequence4)
-			self.consequence4_label.grid(row=5,column=0)
-		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
-		self.ok.grid(row=6,column=0,sticky=E+W)
-
-
-	
-		if self.evil==0:
-			self.random_wndw.configure(bg="red")
-			self.back="red"
-		elif self.evil==1:
-			self.random_wndw.configure(bg="green")
-			self.back="green"
-		self.gen_label=Label(self.random_wndw,bg=self.back,text=self.event_text)
-		self.gen_label.grid(row=1,column=0)
-		self.consequence_label=Label(self.random_wndw,bg=self.back,text=self.consequence1) #aspoň jeden následek je vždycky
-		self.consequence_label.grid(row=2,column=0)
-		if "self.consequence2" in locals(): #když byla dříve nadefinovaná proměnná na následky, vytvoří se o tom label
-			self.consequence2_label=Label(self.random_wndw,bg=self.back,text=self.consequence2)
-			self.consequence2_label.grid(row=3,column=0)
-		if "self.consequence3" in locals():
-			self.consequence3_label=Label(self.random_wndw,bg=self.back,text=self.consequence3)
-			self.consequence3_label.grid(row=4,column=0)
-		if "self.consequence4" in locals():
-			self.consequence4_label=Label(self.random_wndw,bg=self.back,text=self.consequence4)
-			self.consequence4_label.grid(row=5,column=0)
-		self.ok=Button(self.random_wndw,text="ok",command=self.random_wndw.destroy)
-		self.ok.grid(row=6,column=0,sticky=E+W)
-		"""
 lol=main()
 mainloop()
 
