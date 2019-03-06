@@ -90,10 +90,18 @@ class main:
 		
 		
 		self.main=Tk()
-		self.main.attributes("-fullscreen", True) #fullscreen mode
+		#self.main.attributes("-fullscreen", True) #fullscreen mode
 		#self.main.configure(background="white")
+		
+		#okno doprostřed
 		self.screen_width = self.main.winfo_screenwidth()
 		self.screen_height = self.main.winfo_screenheight()
+		
+		self.size = tuple(int(_) for _ in self.main.geometry().split('+')[0].split('x'))
+		self.g = self.screen_width/2 - self.size[0]/2
+		self.d = self.screen_height/2 - self.size[1]/2
+
+		self.main.geometry("+%d+%d" % (self.g, self.d))
 		
 		#nápisy
 		
@@ -223,6 +231,15 @@ class main:
 		self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
 		self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		
+	def center(): #funkce,která vycentruje současné okno
+		self.width = winfo_screenwidth()
+		self.height = winfo_screenheight()
+		
+		self.size = tuple(int(_) for _ in self.toplevel.geometry().split('+')[0].split('x'))
+		self.g = self.width/2 - self.size[0]/2
+		self.d = self.height/2 - self.size[1]/2
+
+		self.main.geometry("+%d+%d" % (self.g, self.d))
 		
 	def game_over_finance(self): #funkce na konec hry kvůli financím
 		self.popupmsg("konec hry, Škola zkrachovala, zkus to znovu")
@@ -252,10 +269,14 @@ class main:
 		self.trp.grab_set()
 		self.row_index=0
 		self.list_len=len(self.trophy_list)
+		if self.list_len==0:
+			self.empty=Label(self.trp,text="Tvoje škola zatím nemá žádné trofeje! Vylpši něco a tvoji studenti budou úspěšnější",font=self.label_font)
+			self.empty.grid(row=0,column=0,padx=30,pady=20)
 		for	x in range (len(self.trophy_list)):
 			self.trp_lbl=Label(self.trp,text=self.trophy_list[x])
-			self.trp_lbl.grid(row=self.row_index,column=0)
+			self.trp_lbl.grid(row=self.row_index,font=self.label_font,column=0,padx=10,pady=10)
 			self.row_index+=1
+			
 			
 		
 	def end(self): #funkce uzavírající jak popupmsg, tak hru. Volá se při konci hry
@@ -267,37 +288,37 @@ class main:
 		self.upg.grab_set()
 		
 		##info
-		self.sport_frame=Frame(self.upg)
-		self.sport_frame.grid(row=0,column=0)#,sticky=N+S)
-		self.sport_info=Label(self.sport_frame,text="úroveň sportovního vybavení: "+str(self.sport_level)) #info o levelu sportovního vybavení
-		self.sport_info.grid(row=0,column=0,padx=10)
-		self.sport_button=Button(self.sport_frame,text="vylepšit sportovní vybavení",command=self.sport_upgrade) #tlačítko na vylepšení sportovního vybavení
-		self.sport_button.grid(row=0,column=1,padx=10)#,sticky=E+W)
+		#self.sport_frame=Frame(self.upg)
+		#self.sport_frame.grid(row=0,column=0)#,sticky=N+S)
+		self.sport_info=Label(self.upg,font=self.label_font,text="úroveň sportovního vybavení: "+str(self.sport_level)) #info o levelu sportovního vybavení
+		self.sport_info.grid(row=0,column=0,padx=20,pady=10)#,sticky=W)
+		self.sport_button=Button(self.upg,font=self.label_font,text="vylepšit sportovní vybavení",command=self.sport_upgrade) #tlačítko na vylepšení sportovního vybavení
+		self.sport_button.grid(row=0,column=1,padx=10,pady=10,sticky=W+E)#,sticky=E+W)
 	
-		self.veda_frame=Frame(self.upg,width=200)
-		self.veda_frame.grid(row=1,column=0,sticky=E+W)		
-		self.veda_info=Label(self.veda_frame,text="úroveň vědeckého vybavení: "+str(self.veda_level)) #info o levelu vědeckého vybavení
-		self.veda_info.grid(row=0,column=0,sticky=W)
-		self.veda_button=Button(self.veda_frame,text="vylepšit vědecké vybavení",command=self.veda_upgrade) #tlačítko na vylepšení vědeckého vybavení 
-		self.veda_button.grid(row=0,column=1,sticky=E)
+		#self.veda_frame=Frame(self.upg,width=200)
+		#self.veda_frame.grid(row=1,column=0,sticky=E+W)		
+		self.veda_info=Label(self.upg,font=self.label_font,text="úroveň vědeckého vybavení: "+str(self.veda_level)) #info o levelu vědeckého vybavení
+		self.veda_info.grid(row=1,column=0,padx=20,pady=10)#,sticky=W)
+		self.veda_button=Button(self.upg,font=self.label_font,text="vylepšit vědecké vybavení",command=self.veda_upgrade) #tlačítko na vylepšení vědeckého vybavení 
+		self.veda_button.grid(row=1,column=1,padx=10,pady=10,sticky=W+E)
 				
-		self.vedomosti_frame=Frame(self.upg)
-		self.vedomosti_frame.grid(row=2,column=0,sticky=E+W)
-		self.vedomosti_info=Label(self.vedomosti_frame,text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level)) #info o levelu učebního vybavení
-		self.vedomosti_info.grid(row=0,column=0,sticky=W)
-		self.vedomosti_button=Button(self.vedomosti_frame,text="vylepšit učební pomůcky",command=self.vedomosti_upgrade) #tlačítko na vylepšení učebních pomůcek
-		self.vedomosti_button.grid(row=0,column=1,sticky=E)
+		#self.vedomosti_frame=Frame(self.upg)
+		#self.vedomosti_frame.grid(row=2,column=0,sticky=E+W)
+		self.vedomosti_info=Label(self.upg,font=self.label_font,text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level)) #info o levelu učebního vybavení
+		self.vedomosti_info.grid(row=2,column=0,padx=20,pady=10)#,sticky=W)
+		self.vedomosti_button=Button(self.upg,font=self.label_font,text="vylepšit učební pomůcky",command=self.vedomosti_upgrade) #tlačítko na vylepšení učebních pomůcek
+		self.vedomosti_button.grid(row=2,column=1,padx=10,pady=10,sticky=W+E)
 		
-		self.capacity_frame=Frame(self.upg)
-		self.capacity_frame.grid(row=3,column=0,sticky=E+W)
-		self.capacity_info=Label(self.capacity_frame,text="maximální kapacita žáků je: "+str(self.pocet_zaku)) #info o počtu žáků
-		self.capacity_info.grid(row=0,column=0,sticky=W)
-		self.capacity_button=Button(self.capacity_frame,text="zvýšit kapacitu školy",command=self.expand) #tlačítko na zvětšení školy
-		self.capacity_button.grid(row=0,column=1,sticky=E)
+		#self.capacity_frame=Frame(self.upg)
+		#self.capacity_frame.grid(row=,column=0,sticky=E+W)
+		self.capacity_info=Label(self.upg,font=self.label_font,text="maximální kapacita žáků je: "+str(self.pocet_zaku)) #info o počtu žáků
+		self.capacity_info.grid(row=3,column=0,padx=20,pady=10)#,sticky=W)
+		self.capacity_button=Button(self.upg,font=self.label_font,text="zvýšit kapacitu školy",command=self.expand) #tlačítko na zvětšení školy
+		self.capacity_button.grid(row=3,column=1,padx=10,pady=10,sticky=W+E)
 		
 		##zpět
-		self.b1=Button(self.upg,text="zpět",command=self.upg.destroy) #tlačítko zavírající okno
-		self.b1.grid(row=4,column=0,columnspan=2,sticky=E+W)
+		self.b1=Button(self.upg,font=self.label_font,text="zpět",command=self.upg.destroy) #tlačítko zavírající okno
+		self.b1.grid(row=4,column=0,columnspan=2,padx=20,pady=10)#,sticky=E+W)
 	
 	def expand(self): #funkce zvyšující kapacitu budovy
 		self.penize=self.penize-((self.zaci_lvl+1)*1050000) #počítání ceny na základě stávajícího počtu žáků
@@ -381,7 +402,6 @@ class main:
 			return
 		
 	def zmenit_platy(self): #definuje okno umožňující měnit platy učitelů 
-		
 		self.plat_wndw=Toplevel()
 		self.plat_wndw.grab_set()
 		self.pocet_label=Label(self.plat_wndw,font=self.l_font,text="počet učitelů: "+str(self.pocet_ucitelu))
@@ -482,6 +502,17 @@ class main:
 			self.competition_modifier=self.veda_modifier
 
 		self.soutez_okno=Toplevel() #definice okna pro soutěže
+		"""
+		#okno doprostřed
+		self.screen_width = self.soutez_okno.winfo_screenwidth()
+		self.screen_height = self.soutez_okno.winfo_screenheight()
+		
+		self.size = tuple(int(_) for _ in self.soutez.geometry().split('+')[0].split('x'))
+		self.g = self.screen_width/2 - self.size[0]/2
+		self.d = self.screen_height/2 - self.size[1]/2
+
+		self.soutez_okno.geometry("+%d+%d" % (self.g, self.d))
+		"""
 		self.soutez_okno.grab_set()
 		self.soutez_label=Label(self.soutez_okno,text=str(self.competition_type)+"!")
 		self.soutez_label.pack()
@@ -559,12 +590,12 @@ class main:
 			self.rodice_spokojenost-=10
 			self.ucitele_spokojenost-=10
 			self.studenti_spokojenost-=10
-			self.event_class4("Školní inspekce odhalila závažné vady na vybavení školy. Musíš okamžitě vynaložit prostředky na opravu.","red","peníze - "+str(40000+self.zaci_lvl*8000),"spokojenost rodičů - 10","spokojenost učitelů - 10","spokojenost žáků - 10")
+			self.event_class4("Inspekce odhalila vady na vybavení školy. Musíš to okamžitě napravit.","red","peníze - "+str(40000+self.zaci_lvl*8000),"spokojenost rodičů - 10","spokojenost učitelů - 10","spokojenost žáků - 10")
 		elif self.event==6:
 			self.penize-=100000
 			self.studenti_spokojenost-=10
 			self.ucitele_spokojenost-=10
-			self.event_class3("Vypověděl službu jeden z kotlů na teplou vodu. Ve škole teče jen studená voda a je třeba urychleně investovat do nového kotle","red","peníze - 100000","spokojenost žáků - 10","spokojenost učitelů - 10")
+			self.event_class3("Vypověděl službu jeden z kotlů na teplou vodu. Je třeba investovat do nového kotle","red","peníze - 100000","spokojenost žáků - 10","spokojenost učitelů - 10")
 		elif self.event==7:
 			self.penize-=5000
 			self.studenti_spokojenost-=5
@@ -587,7 +618,7 @@ class main:
 			self.ucitele_spokojenost-=5
 			self.studenti_spokojenost-=5
 			self.rodice_spokojenost-=5
-			self.event_class4("Při kontrole se zjistilo, že školní učebnice jsou zastaralé a velké množství se jich muselo vyhodit","red","level učebního vybavení - 1","spokojenost učitelů - 5","spokojenost žáků - 5","spokojenost rodičů - 5")
+			self.event_class4("Školní učebnice jsou zastaralé a velké množství se jich muselo vyhodit","red","level učebního vybavení - 1","spokojenost učitelů - 5","spokojenost žáků - 5","spokojenost rodičů - 5")
 		elif self.event==11:
 			self.sport_level-=1
 			self.ucitele_spokojenost-=5
