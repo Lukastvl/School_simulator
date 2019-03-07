@@ -1,35 +1,20 @@
 #coding: utf-8
 
-#spočítat a vybalancovat začáteční pozici hráče
-
-##grafika
-#aby se widgety nehýbaly během hry
-#dynamická velikost na hlavní obrazovce
-#velikost okna,framů a přilepení k okrajům
-#spawnovat uprostřed obrazovky(funkce geometry)
-#dynamická velikost písma/jak to udělat, aby se widgety nerozlejzaly ven z obrazovky
-
 #----------------------------------------------------------------------------------------------------------------
 #importy
 from random import randint
 from sys import exit
 from Tkinter import *
 import tkFont
-#import PIL.Image
 from PIL import Image,ImageTk
-
-
-
 
 #----------------------------------------------------------------------------------------------------------------
 #konstruktor
-class main:
+class root:
 	def __init__(self):
-		
 #----------------------------------------------------------------------------------------------------------------
 #proměnné
-#----------------------------------------------------------------------------------------------------------------
-		
+#---------------------------------------------------------------------------------------------------------------- 
 		self.vzdel_souteze=[
 			" soutěž v matematicu",	#seznam vědomostních meziškolních soutěží
 			" biologická olympiáda",
@@ -60,12 +45,12 @@ class main:
 			" soutěž v rychlopitvách ježků",
 		]
 		
-		self.trophy_list=[]
+		self.trophy_list=[] #prázdný seznam, používá se v okně pro trofeje
 		
-		self.tyden=42   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
+		self.tyden=1   #kolikátý týden se píše od hráčova nástupu do funkce ředitele
 		self.calm_week=0 #kolik týdnů se nekonala žádná meziškolní soutěž
 		self.penize=1000000000000000000 #kolik má škola na účtě, integer aby se z toho nedělal float a na obrazovce nebylo x.0
-		self.min_salary=12000 #minimální plat pro učitele
+		self.min_salary=23000 #minimální plat pro učitele
 		self.studenti_spokojenost=50
 		self.ucitele_spokojenost=50 #spokojenosti tří skupin osazenstva školy
 		self.rodice_spokojenost=50
@@ -79,7 +64,7 @@ class main:
 		self.vedomosti_modifier=self.sport_level*2.75
 
 		#proměnné, které jsou závislé na jiných faktorech
-		self.plat=15500 #plat na jednoho učitele
+		self.plat=28650 #plat na jednoho učitele
 		self.pocet_zaku=120	#počet žáků školy
 		self.zaci_lvl=1 #proměnná nepřímo závislá na počtu žáků, používá se pro počty při vylepšování školy 
 		self.najem=100000 #měsíční nájem za školní budovu
@@ -89,28 +74,13 @@ class main:
 		self.skolne=self.castka*self.pocet_zaku	#celková měsíční částka, kterouškola dostane na školném
 		
 		
-		self.main=Tk()
-		#self.main.attributes("-fullscreen", True) #fullscreen mode
-		#self.main.configure(background="white")
-		
-		#okno doprostřed
-		self.screen_width = self.main.winfo_screenwidth()
-		self.screen_height = self.main.winfo_screenheight()
-		
-		self.size = tuple(int(_) for _ in self.main.geometry().split('+')[0].split('x'))
-		self.g = self.screen_width/2 - self.size[0]/2
-		self.d = self.screen_height/2 - self.size[1]/2
-
-		self.main.geometry("+%d+%d" % (self.g, self.d))
-		
-		#nápisy
-		
+		self.main=Tk() 
+		#fonty		
 		self.l_font=tkFont.Font(family="comic sans",size=16)
 		self.buttonFont=tkFont.Font(family="comic sans",size=22,weight=tkFont.BOLD)		
 		self.label_font=tkFont.Font(family="comic sans",size=16) #font na nápis
-		self.random_font=tkFont.Font(family="comic sans",size=16,weight=tkFont.BOLD) #font na čísla u nápisů
 		
-		
+		#nápisy
 		self.label_frame=Frame(self.main) #rámeček na nápisy
 		self.label_frame.grid(row=2,column=1)
 		self.week_info=Label(self.label_frame,font=self.label_font, text="týden: ") #píše kolikátý je týden od začátku hry
@@ -147,13 +117,13 @@ class main:
 
 		#spokojenosti
 		
-		self.sa_frame=Frame(self.main) #,pady=self.label_width-) #rámeček kvůli grafickému rozmístění
-		self.sa_frame.grid(row=2,column=0)
-		self.studenti_info=Label(self.sa_frame,text="spokojenost studentů: ")# + str(self.studenti_spokojenost)) #píše spokojenost žáků
+		self.sa_frame=Frame(self.main)#rámeček kvůli grafickému rozmístění
+		self.sa_frame.grid(row=2,column=0,sticky=N+E+W+S)
+		self.studenti_info=Label(self.sa_frame,font=self.label_font,text="spokojenost studentů: ")#píše spokojenost žáků
 		self.studenti_info.grid(column=0,row=0)
-		self.ucitele_info=Label(self.sa_frame,text="spokojenost učitelů: ")# + str(self.ucitele_spokojenost)) #píše spokojenost učitelů
+		self.ucitele_info=Label(self.sa_frame,font=self.label_font,text="spokojenost učitelů: ")#píše spokojenost učitelů
 		self.ucitele_info.grid(column=0,row=1)
-		self.rodice_info=Label(self.sa_frame,text="spokojenost rodičů: ")# + str(self.rodice_spokojenost)) #píše spokojenost rodičů
+		self.rodice_info=Label(self.sa_frame,font=self.label_font,text="spokojenost rodičů: ")#píše spokojenost rodičů
 		self.rodice_info.grid(column=0,row=2)
 		self.studenti_canvas=Canvas(self.sa_frame,background="white",width=200, height=15)
 		self.stangle=self.studenti_canvas.create_rectangle(0,0,self.studenti_spokojenost*2,17,fill="green",width=0)
@@ -167,10 +137,10 @@ class main:
 		self.rtangle=self.rodice_canvas.create_rectangle(0,0,self.rodice_spokojenost*2,17,fill="green",width=0)
 		self.rtext=self.rodice_canvas.create_text(94,2,anchor=NW,text=self.rodice_spokojenost)
 		self.rodice_canvas.grid(column=1,row=2)
-		#tlačítka na hlavní obrazovce
 		
-		self.button_frame=Frame(self.main) #,height=self.screen_height-self.sf_height) #rámeček kvůli grafickému rozmístění
-		self.button_frame.grid(row=0,column=2,sticky=E+W)#,sticky=N+E+S+W)#,pady=20,padx=20)
+		#tlačítka na hlavní obrazovce
+		self.button_frame=Frame(self.main) #rámeček kvůli grafickému rozmístění
+		self.button_frame.grid(row=0,column=2,sticky=E+W)
 		self.money_button=Button(self.button_frame,height=2,font=self.buttonFont, text="změnit školné",command=self.zmenit_skolne) #otevře okno na změnu školného
 		self.money_button.grid(column=0,row=2,sticky=E+W)
 		self.upgrade_button=Button(self.button_frame,height=2,font=self.buttonFont,text="vylepšení",command=self.upgrades) #otevře okno s vylepšeními školního vybavení
@@ -180,42 +150,34 @@ class main:
 		self.trophy_button=Button(self.button_frame,height=2,font=self.buttonFont,text="skříňka s trofejemi",command=self.trophies) #otevírá okno se školními poháry
 		self.trophy_button.grid(column=0,row=5,sticky=E+W)
 		
-		#obrázek
+		#obrázek ředitelny
 		self.image=Image.open("reditelna.jpg")
 		self.img=ImageTk.PhotoImage(self.image)
 		self.img_label=Label(self.main,image=self.img)
 		self.img_label.image=self.img
 		self.img_label.grid(row=0,column=0,columnspan=2,rowspan=2)
 
-		#vpřed  a opustit hru
+		#vpřed a opustit hru
 		self.admin_frame=Frame(self.main)
 		self.admin_frame.grid(row=2,column=2,sticky=W+E)
 		
 		#tlačítko vpřed
 		self.forwardbuttonfont=tkFont.Font(family="comic sans",size=36,weight=tkFont.BOLD)
 		self.forward_button=Button(self.admin_frame,font=self.forwardbuttonfont, text="vpřed",command=self.vpred) #posune čas o týden vpřed 
-		self.forward_button.grid(column=0,row=0,sticky=E+W)#,sticky=N+E+W+S)
+		self.forward_button.grid(column=0,row=0,sticky=E+W)
 		
 		#tlačítko opustit hru
 		self.leavebuttonfont=tkFont.Font(family="comic sans",size=14,weight=tkFont.BOLD)
 		self.exit_button=Button(self.admin_frame,font=self.leavebuttonfont, text="opustit hru", command=sys.exit) #ukončí hru
-		self.exit_button.grid(column=0,row=1,sticky=E+W)#,sticky=E+W)
-		
+		self.exit_button.grid(column=0,row=1,sticky=E+W)
+				
 		self.main.update()
 		self.screen_width = self.main.winfo_screenwidth()
 		self.screen_height = self.main.winfo_screenheight()
-		#self.label_width=self.label_frame.winfo_width()
-		#self.sa_width=self.sa_frame.winfo_width()
-		#self.bt_height=self.button_frame.winfo_height()
-		#self.sa_height=self.sa_frame.winfo_height()
-		#self.v_indent=self.screen_height-self.bt_height-self.sa_height-10
-		#self.h_indent=self.screen_width-self.sa_width-self.label_width-10
-		#self.sa_frame.grid(row=1,column=0,padx=(10,self.v_indent),pady=(self.h_indent,10))
-
+		self.center(self.main)
 		
 #----------------------------------------------------------------------------------------------------------------
 	def refresh(self): #funkce kontrolující obsah okna
-		#refresh nápisů
 		self.week_int.config(text=self.tyden)
 		self.money_int.config(text=self.penize)
 		self.building_int.config(text=self.najem)
@@ -223,6 +185,7 @@ class main:
 		self.teacher_sint.config(text=self.plat)
 		self.student_int.config(text=self.pocet_zaku)
 		self.student_castka.config(text=self.castka)
+		
 		#úpravy spokojeností
 		self.studenti_canvas.coords(self.stangle,0,0,self.studenti_spokojenost*2,17)
 		self.studenti_canvas.itemconfigure(self.stext,text=self.studenti_spokojenost)
@@ -231,52 +194,50 @@ class main:
 		self.ucitele_canvas.coords(self.utangle,0,0,self.ucitele_spokojenost*2,17)
 		self.ucitele_canvas.itemconfigure(self.utext,text=self.ucitele_spokojenost)
 		
-	def center(): #funkce,která vycentruje současné okno
-		self.width = winfo_screenwidth()
-		self.height = winfo_screenheight()
-		
-		self.size = tuple(int(_) for _ in self.toplevel.geometry().split('+')[0].split('x'))
-		self.g = self.width/2 - self.size[0]/2
-		self.d = self.height/2 - self.size[1]/2
-
-		self.main.geometry("+%d+%d" % (self.g, self.d))
+	def center(self,win): #funkce,která vycentruje současné okno
+		win.update()
+		w_req, h_req = win.winfo_width(), win.winfo_height()
+		w_form = win.winfo_rootx() - win.winfo_x()
+		w = w_req + w_form*2
+		h = h_req + (win.winfo_rooty() - win.winfo_y()) + w_form
+		x = (win.winfo_screenwidth() // 2) - (w // 2)
+		y = (win.winfo_screenheight() // 2) - (h // 2)
+		win.geometry('{0}x{1}+{2}+{3}'.format(w_req, h_req, x, y))
 		
 	def game_over_finance(self): #funkce na konec hry kvůli financím
 		self.popupmsg("konec hry, Škola zkrachovala, zkus to znovu")
-		return
 		
 	def game_over_odvolani(self): #funkce na konec hry kvůli znepřátelení osazenstva školy/rodičů
-		self.popupmsg("konec hry, byl jsi sesazen kombinovanou mocí svých poddaných")
-		return
+		self.popupmsg("konec hry, byl jsi sesazen kombinovanou mocí svých podřízených")
 		
 	def game_over_gut(self): #funkce na "šťastný konec hry"
 		self.popupmsg("konec hry, šťastně jsi dokázal vést svou školu po dobu dvou let! Gratulujeme")
-		return
 	
 	def popupmsg(self,msg):  #custom msgbox
 		self.popup=Toplevel()
 		self.popup.grab_set() #aby uživatel nemohl do hlavního okna než vyřeší popup
-		#self.popup.geometry("500x150+50+50")
-		#self.popup.wm_title("pozor")
+		self.center(self.popup) #vycentruje doprostřed
 		self.label=Label(self.popup, text=msg)
 		self.label.pack(side="top",fill="x", pady=10)
 		self.b1=Button(self.popup,text="OK",command=self.end) #ok tlačítko, zavírá popup
 		self.b1.pack()
-		return
+		self.center(self.popup)
 	
-	def trophies(self):
+	def trophies(self): #okno, kde se ukazují všechny trofeje, které hráčova škola vyhrála
 		self.trp=Toplevel()
 		self.trp.grab_set()
 		self.row_index=0
 		self.list_len=len(self.trophy_list)
 		if self.list_len==0:
-			self.empty=Label(self.trp,text="Tvoje škola zatím nemá žádné trofeje! Vylpši něco a tvoji studenti budou úspěšnější",font=self.label_font)
+			self.empty=Label(self.trp,font=self.label_font,text="Tvoje škola zatím nemá žádné trofeje! Vylepši něco a tvoji studenti budou úspěšnější")
 			self.empty.grid(row=0,column=0,padx=30,pady=20)
 		for	x in range (len(self.trophy_list)):
 			self.trp_lbl=Label(self.trp,text=self.trophy_list[x])
 			self.trp_lbl.grid(row=self.row_index,font=self.label_font,column=0,padx=10,pady=10)
 			self.row_index+=1
-			
+		self.btn=Button(self.trp,font=self.label_font,text="ok",command=self.trp.destroy)
+		self.btn.grid()
+		self.center(self.trp)
 			
 		
 	def end(self): #funkce uzavírající jak popupmsg, tak hru. Volá se při konci hry
@@ -288,29 +249,21 @@ class main:
 		self.upg.grab_set()
 		
 		##info
-		#self.sport_frame=Frame(self.upg)
-		#self.sport_frame.grid(row=0,column=0)#,sticky=N+S)
 		self.sport_info=Label(self.upg,font=self.label_font,text="úroveň sportovního vybavení: "+str(self.sport_level)) #info o levelu sportovního vybavení
 		self.sport_info.grid(row=0,column=0,padx=20,pady=10)#,sticky=W)
 		self.sport_button=Button(self.upg,font=self.label_font,text="vylepšit sportovní vybavení",command=self.sport_upgrade) #tlačítko na vylepšení sportovního vybavení
 		self.sport_button.grid(row=0,column=1,padx=10,pady=10,sticky=W+E)#,sticky=E+W)
 	
-		#self.veda_frame=Frame(self.upg,width=200)
-		#self.veda_frame.grid(row=1,column=0,sticky=E+W)		
 		self.veda_info=Label(self.upg,font=self.label_font,text="úroveň vědeckého vybavení: "+str(self.veda_level)) #info o levelu vědeckého vybavení
 		self.veda_info.grid(row=1,column=0,padx=20,pady=10)#,sticky=W)
 		self.veda_button=Button(self.upg,font=self.label_font,text="vylepšit vědecké vybavení",command=self.veda_upgrade) #tlačítko na vylepšení vědeckého vybavení 
 		self.veda_button.grid(row=1,column=1,padx=10,pady=10,sticky=W+E)
 				
-		#self.vedomosti_frame=Frame(self.upg)
-		#self.vedomosti_frame.grid(row=2,column=0,sticky=E+W)
 		self.vedomosti_info=Label(self.upg,font=self.label_font,text="úroveň vzdělanostního vybavení: "+str(self.vedomosti_level)) #info o levelu učebního vybavení
 		self.vedomosti_info.grid(row=2,column=0,padx=20,pady=10)#,sticky=W)
 		self.vedomosti_button=Button(self.upg,font=self.label_font,text="vylepšit učební pomůcky",command=self.vedomosti_upgrade) #tlačítko na vylepšení učebních pomůcek
 		self.vedomosti_button.grid(row=2,column=1,padx=10,pady=10,sticky=W+E)
 		
-		#self.capacity_frame=Frame(self.upg)
-		#self.capacity_frame.grid(row=,column=0,sticky=E+W)
 		self.capacity_info=Label(self.upg,font=self.label_font,text="maximální kapacita žáků je: "+str(self.pocet_zaku)) #info o počtu žáků
 		self.capacity_info.grid(row=3,column=0,padx=20,pady=10)#,sticky=W)
 		self.capacity_button=Button(self.upg,font=self.label_font,text="zvýšit kapacitu školy",command=self.expand) #tlačítko na zvětšení školy
@@ -319,6 +272,7 @@ class main:
 		##zpět
 		self.b1=Button(self.upg,font=self.label_font,text="zpět",command=self.upg.destroy) #tlačítko zavírající okno
 		self.b1.grid(row=4,column=0,columnspan=2,padx=20,pady=10)#,sticky=E+W)
+		self.center(self.upg)
 	
 	def expand(self): #funkce zvyšující kapacitu budovy
 		self.penize=self.penize-((self.zaci_lvl+1)*1050000) #počítání ceny na základě stávajícího počtu žáků
@@ -362,19 +316,20 @@ class main:
 
 	def zmenit_skolne(self): #definuje okno, které umožňuje měnit školné 
 		self.skol=Toplevel()
-		self.skol.grab_set() #
+		self.skol.grab_set()
 		self.infolabel=Label(self.skol,font=self.l_font, text="Stávající školné na žáka na měsíc je "+str(self.castka)+" kč")
 		self.infolabel.grid(column=1,row=0,padx=10,pady=5)#,columnspan=2)
 		self.low=Label(self.skol,font=self.l_font,foreground="red",text="moc nízká hodnota") #definice textu pro případ zadání neplatné hodnoty hráčem
 		self.high=Label(self.skol,font=self.l_font,fg="red",text="moc vysoká hodnota")
 		self.entry_width=self.infolabel.winfo_width()
 		self.s_entry=Entry(self.skol,font=self.l_font)
-		self.s_entry.grid(column=1,row=1,padx=10,pady=5,sticky=N+E+W+S)#,columnspan=2)
+		self.s_entry.grid(column=1,row=1,padx=10,pady=5,sticky=N+E+W+S)
 		self.s_entry.focus_set() #aby se hned po otevření okna dalo psát do Entry
 		self.b1=Button(self.skol, text="Storno",font=self.l_font, command=self.skol.destroy) #tlačítka
 		self.b1.grid(column=0,row=1,sticky=N+E+W+S,padx=10,pady=5)
 		self.b2=Button(self.skol,text="Potvrdit",font=self.l_font, command=self.s_zmen)
 		self.b2.grid(column=0,row=0,sticky=N+E+W+S,padx=10,pady=5)
+		self.center(self.skol)
 		
 	def s_zmen(self): #funkce měnící výši školného
 		self.s_output=int(self.s_entry.get()) #vyčtení hodnoty z Entry 
@@ -405,9 +360,9 @@ class main:
 		self.plat_wndw=Toplevel()
 		self.plat_wndw.grab_set()
 		self.pocet_label=Label(self.plat_wndw,font=self.l_font,text="počet učitelů: "+str(self.pocet_ucitelu))
-		self.pocet_label.grid(column=0,row=0,padx=10,pady=10)#,sticky=NW)
+		self.pocet_label.grid(column=0,row=0,padx=10,pady=10)
 		self.teacher_min_salary=Label(self.plat_wndw,font=self.l_font,text="minimální plat: "+str(self.min_salary))
-		self.teacher_min_salary.grid(column=0,row=1,padx=10,pady=10)#,sticky=SW)
+		self.teacher_min_salary.grid(column=0,row=1,padx=10,pady=10)
 		self.plat_label=Label(self.plat_wndw,font=self.l_font,text="plat na jednoho učitele: "+str(self.plat))
 		self.plat_label.grid(column=1,row=0,padx=10,pady=10)
 		self.naklady_label=Label(self.plat_wndw,font=self.l_font,text="celkové náklady na učitele: "+str(self.vydaje_na_ucitele))
@@ -417,11 +372,10 @@ class main:
 		self.p_entry.grid(column=0,row=2,columnspan=2,padx=10,pady=10,sticky=E+W)
 		self.p_entry.focus_set()
 		self.b1=Button(self.plat_wndw,text="Storno",command=self.plat_wndw.destroy) #tlačítko zavírající okno
-		#self.b1.grid(column=0,row=0,sticky=N+E+W+S)
-		self.b1.grid(column=0,row=3,padx=10,pady=10)#,sticky=E+W)
+		self.b1.grid(column=0,row=3,padx=10,pady=10)
 		self.b2=Button(self.plat_wndw,text="Potvrdit", command=self.p_zmen) #tlačítko volající funkci, která mění výši platů
-		#self.b2.grid(column=1,row=0,sticky=N+E+W+S)
-		self.b2.grid(column=1,row=3,padx=10,pady=10)#,sticky=E+W)
+		self.b2.grid(column=1,row=3,padx=10,pady=10)
+		self.center(self.plat_wndw)
 		
 	def p_zmen(self): #funkce měnící plat 
 		self.p_output=self.p_entry.get() #vyčtení hodnoty zadané hráčem
@@ -502,17 +456,6 @@ class main:
 			self.competition_modifier=self.veda_modifier
 
 		self.soutez_okno=Toplevel() #definice okna pro soutěže
-		"""
-		#okno doprostřed
-		self.screen_width = self.soutez_okno.winfo_screenwidth()
-		self.screen_height = self.soutez_okno.winfo_screenheight()
-		
-		self.size = tuple(int(_) for _ in self.soutez.geometry().split('+')[0].split('x'))
-		self.g = self.screen_width/2 - self.size[0]/2
-		self.d = self.screen_height/2 - self.size[1]/2
-
-		self.soutez_okno.geometry("+%d+%d" % (self.g, self.d))
-		"""
 		self.soutez_okno.grab_set()
 		self.soutez_label=Label(self.soutez_okno,text=str(self.competition_type)+"!")
 		self.soutez_label.pack()
@@ -560,6 +503,7 @@ class main:
 			if self.place<=3:
 				self.exito=str(self.place)+". místo -"+str(self.competition_type)
 				self.trophy_list.append(self.exito)
+		self.center(self.soutez_okno)
 		
 	def random_event(self,eve): #funkce simulující náhodné události
 		self.event=eve
@@ -702,7 +646,7 @@ class main:
 		self.ok.grid(row=5,column=0,sticky=E+W)
 		return
 
-lol=main()
+lol=root()
 mainloop()
 
 
